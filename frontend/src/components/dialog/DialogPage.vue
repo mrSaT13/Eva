@@ -60,8 +60,10 @@ const sendCommand = () => {
 
 <template>
     <div class="dialog-page">
-        <TimerWidget />
-        <TemperatureWidget :entityId="tempEntityId" :visible="showTempWidget" />
+        <div class="sticky-top">
+            <TimerWidget />
+            <TemperatureWidget :entityId="tempEntityId" :visible="showTempWidget" />
+        </div>
         <div class="messages-feed" ref="feed">
             <template v-for="message in historySm.state.value.context.messages" :key="message.id">
                 <Message :message="message" />
@@ -117,6 +119,14 @@ const sendCommand = () => {
     display: flex;
     flex-direction: column;
     min-height: calc(100vh - var(--header-h, 64px) - var(--nav-h, 60px));
+    position: relative;
+}
+
+.sticky-top {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg-primary, #000);
 }
 
 .messages-feed {

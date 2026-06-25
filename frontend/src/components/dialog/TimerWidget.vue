@@ -163,10 +163,6 @@ watch(hasActiveItems, (active) => {
 
 <style scoped>
 .timer-widget {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: var(--bg-primary, #000);
     display: flex;
     flex-wrap: wrap;
     gap: 12px;

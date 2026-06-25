@@ -40,7 +40,7 @@ export const messageHistoryMachine = createMachine<Context>(
                         actions: ['setThinking'],
                     },
                     IN_TEXT_COMMAND: {
-                        actions: ['setThinkingOn'],
+                        actions: ['setThinkingOn', 'scrollToBottom'],
                     },
                 },
             },
@@ -69,13 +69,15 @@ export const messageHistoryMachine = createMachine<Context>(
                 thinking: () => true,
             }),
             scrollToBottom: () => {
-                setTimeout(() =>
-                    window.scrollTo({
-                        top: document.body.scrollHeight,
-                        behavior: 'smooth'
-                    }),
-                    100
-                );
+                setTimeout(() => {
+                    const scrollContainer = document.querySelector('.main-content');
+                    if (scrollContainer) {
+                        scrollContainer.scrollTo({
+                            top: scrollContainer.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                    }
+                }, 100);
             },
         },
     }
