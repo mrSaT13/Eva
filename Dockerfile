@@ -21,7 +21,8 @@ RUN groupadd --gid 1001 eva && useradd --create-home eva --uid 1001 --gid eva
 RUN mkdir -p /eva/config /eva/data && chown -R 1001:1001 /eva
 
 COPY ./requirements.txt /tmp/requirements.txt
-RUN pip install --no-cache-dir -r /tmp/requirements.txt && rm /tmp/requirements.txt
+COPY ./eva_plugin_llm/requirements.txt /tmp/eva_plugin_llm_requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt -r /tmp/eva_plugin_llm_requirements.txt && rm /tmp/requirements.txt /tmp/eva_plugin_llm_requirements.txt
 
 USER eva:eva
 WORKDIR /home/eva

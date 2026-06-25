@@ -42,18 +42,23 @@ const DEFAULT_CONFIG: z.TypeOf<typeof FrontendConfig> = {
     requestWakeLock: true,
 };
 
-const loadConfig: () => Promise<z.TypeOf<typeof FrontendConfig>> = () => new Promise(resolve => {
-    const tryLoad = async () => {
+const loadConfig = async (): Promise<z.TypeOf<typeof FrontendConfig>> => {
+    const tryLoad = async (retries = 3): Promise<z.TypeOf<typeof FrontendConfig>> => {
         try {
             const { config: rawConfig } = await fetchConfig(FRONTEND_CONFIG_SCOPE);
-            resolve(FrontendConfig.parse(rawConfig));
+            return FrontendConfig.parse(rawConfig);
         } catch (error) {
-            console.warn('Сервер недоступен, используютс�� настройки по умолчанию. Повтор через 3 сек...');
-            setTimeout(tryLoad, 3000);
+            if (retries > 0) {
+                console.warn(`Сервер недоступен, повтор через 3 сек... (осталось ${retries} попыток)`);
+                await new Promise(r => setTimeout(r, 3000));
+                return tryLoad(retries - 1);
+            }
+            console.warn('Сервер недоступен, используются настройки по умолчанию.');
+            return DEFAULT_CONFIG;
         }
     }
-    tryLoad();
-});
+    return tryLoad();
+};
 
 const getProtocolRequirements = ({
     audioInputEnabled,
@@ -88,9 +93,7 @@ const getProtocolRequirements = ({
 }
 
 export const initApplication = async () => {
-    let config = DEFAULT_CONFIG;
-
-    loadConfig().then(c => { config = c; }).catch(() => {});
+    const config = await loadConfig();
 
     const { microphoneSampleRate, hideConfiguration, requestWakeLock } = config;
 
