@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  eva:
+    build: .
+    container_name: eva
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    volumes:
+      - eva-config:/home/eva/config
+      - eva-data:/eva/data
+    environment:
+      - EVA_HOME=/eva/data
+    # Uncomment for LLM:
+    # - OPENAI_API_KEY=sk-...
+    # - LM_STUDIO_URL=http://host.docker.internal:1234/v1
+
+  # Optional: LM Studio (local LLM)
+  # lmstudio:
+  #   image: ghcr.io/lmstudio-ai/lmstudio:latest
+  #   ports:
+  #     - "1234:1234"
+  #   volumes:
+  #     - lmstudio-data:/root/.lmstudio
+
+  # Optional: Home Assistant
+  # homeassistant:
+  #   image: ghcr.io/home-assistant/home-assistant:stable
+  #   ports:
+  #     - "8123:8123"
+  #   volumes:
+  #     - ha-config:/config
+
+volumes:
+  eva-config:
+  eva-data:
+  # lmstudio-data:
+  # ha-config:

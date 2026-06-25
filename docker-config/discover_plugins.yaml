@@ -1,0 +1,12 @@
+# Настройки плагина discover_plugins@1.0.0
+appendPythonPath:
+  - '{eva_home}/plugins'
+  - '{eva_home}/deps'
+excludePlugins:
+  - 'plugin_tts_pyttsx'
+  - 'plugin_tts_bark.py'
+pluginPaths:
+  - '{eva_path}/embedded_plugins/plugin_*.py'
+  - '{eva_home}/plugins/plugin_*.py'
+  - '{eva_home}/plugins/*/plugin_*.py'
+  - '{python_path}/irene_plugin_*/plugin_*.py'
