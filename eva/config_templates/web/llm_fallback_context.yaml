@@ -1,0 +1,12 @@
+enabled: true
+llm_settings:
+  type: lmstudio
+  base_url: 'http://127.0.0.1:1234/v1'
+  model: 'local-model'
+  temperature: 0.7
+  api_key: 'lm-studio'
+system_prompt: |
+  Ты - умный голосовой помощник Eva.
+  Отвечай на том языке, на котором пользователь задал вопрос.
+  Отвечай кратко и по существу.
+debug: false

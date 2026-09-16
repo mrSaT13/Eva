@@ -1,0 +1,61 @@
+defaultLocalPlayer:
+  type: sounddevice
+voiceProfiles:
+  edge_ru_female:
+    enabled: true
+    priority: -3000
+    tts_settings:
+      type: edge
+      voice: ru-RU-SvetlanaNeural
+    metadata:
+      language.ru: true
+      gender.female: true
+      usage.web: true
+      usage.local: true
+      label: "Ева (русский женский)"
+  edge_ru_male:
+    enabled: false
+    priority: -2900
+    tts_settings:
+      type: edge
+      voice: ru-RU-DmitryNeural
+    metadata:
+      language.ru: true
+      gender.male: true
+      usage.web: true
+      usage.local: true
+      label: "Дмитрий (русский мужской)"
+  edge_en_female:
+    enabled: true
+    priority: -2800
+    tts_settings:
+      type: edge
+      voice: en-US-JennyNeural
+    metadata:
+      language.en: true
+      gender.female: true
+      usage.web: true
+      usage.local: true
+      label: "Jenny (English female)"
+  edge_en_male:
+    enabled: false
+    priority: -2700
+    tts_settings:
+      type: edge
+      voice: en-US-GuyNeural
+    metadata:
+      language.en: true
+      gender.male: true
+      usage.web: true
+      usage.local: true
+      label: "Guy (English male)"
+  pyttsx_ru:
+    enabled: true
+    priority: -1000
+    tts_settings:
+      type: pyttsx
+    metadata:
+      language.ru: true
+      gender.female: true
+      usage.local: true
+      label: "pyttsx (офлайн)"

@@ -1,0 +1,15 @@
+# Настройки плагина discover_plugins@1.0.0
+excludePlugins:
+  - 'plugin_tts_silero_v3'
+  - 'plugin_voiceover'
+  - 'plugin_local_speech_face'
+  # - 'plugin_vosk_model_loader'  # включён для загрузки модели
+pluginPaths:
+  - '{eva_path}/embedded_plugins/plugin_*.py'
+  - '{python_path}/irene_plugin_*/plugin_*.py'
+  - '{python_path}/eva_plugin_*/plugin_*.py'
+  - '{eva_home}/plugins/plugin_*.py'
+  - '{eva_home}/plugins/*/plugin_*.py'
+appendPythonPath:
+  - '{eva_home}/plugins'
+  - '{eva_home}/deps'
