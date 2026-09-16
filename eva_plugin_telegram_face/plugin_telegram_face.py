@@ -49,6 +49,7 @@ class TelegramFacePlugin(MagicPlugin):
         self._pm: Optional[PluginManager] = None
 
     def run(self, pm: PluginManager, *_args, **_kwargs):
+        import time
         token: Optional[str] = self.config['token']
 
         if token is None:
@@ -60,7 +61,6 @@ class TelegramFacePlugin(MagicPlugin):
 
         bot = TeleBot(
             token,
-            suppress_middleware_excepions=True,
             num_threads=self.config['numThreads'],
         )
 
@@ -92,7 +92,16 @@ class TelegramFacePlugin(MagicPlugin):
             )
 
             self._bot = bot
-            bot.infinity_polling()
+            backoff = 5
+            while True:
+                try:
+                    bot.infinity_polling(timeout=20, long_polling_timeout=20)
+                    return
+                except Exception:
+                    self._logger.exception(
+                        "Telegram polling упал, перезапуск через %s сек", backoff)
+                    time.sleep(backoff)
+                    backoff = min(backoff * 2, 300)
 
     def terminate(self, *_args, **_kwargs):
         if self._bot is not None:

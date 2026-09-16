@@ -1,0 +1,5 @@
+# Eva — dev/test зависимости (в Docker-образ НЕ ставятся).
+# Установка: pip install -r requirements.txt -r requirements-dev.txt
+time_machine~=2.8.2
+snapshottest~=0.6.0
+types-python-dateutil~=2.9.0.20241206

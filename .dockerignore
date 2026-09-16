@@ -1,0 +1,29 @@
+# Не тащим в Docker-контекст мусор и секреты
+.git/
+.gitignore
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+node_modules/
+frontend/node_modules/
+frontend/dist/
+eva_plugin_web_face_frontend/frontend-dist/
+irene_plugin_web_face_frontend/frontend-dist/
+.env
+.env.*
+*.log
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+credentials/
+_orig/
+docker-compose.override.yml
+.mimocode/
+# Тяжёлые модели не должны инвалидировать кэш слоёв (качаются при старте)
+resources/vosk-models/
+resources/vosk/
+*.zip

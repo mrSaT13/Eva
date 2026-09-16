@@ -62,7 +62,7 @@ const testWebSocket = async () => {
             const data = JSON.parse(event.data);
             wsMessages.value.push(`← ${data.type}: ${JSON.stringify(data).substring(0, 100)}`);
 
-            if (data.type === 'negotiate_agree') {
+            if (data.type === 'negotiate/agree') {
                 // Отправляем тестовую команду
                 setTimeout(() => {
                     ws!.send(JSON.stringify({

@@ -36,14 +36,14 @@ class _Config(TypedDict):
 config: _Config = {
     'rules': [
         {
-            'enabled': False,
+            'enabled': True,
             'path': '/api/config/configs/web_face_frontend',
             'method': None,
             'action': 'allow',
             'comment': "Разрешает доступ к настройкам веб-фронтенда",
         },
         {
-            'enabled': False,
+            'enabled': True,
             'path': '/api/config/.*',
             'method': None,
             'action': 'deny',
@@ -51,7 +51,7 @@ config: _Config = {
         },
     ],
     'default': {
-        'action': 'allow',
+        'action': 'deny',
     },
 }
 
@@ -110,7 +110,7 @@ class _Rule:
                 return False
 
         if self._path_pattern is not None:
-            if not self._path_pattern.match(req.url.path):
+            if not self._path_pattern.fullmatch(req.url.path):
                 return False
 
         return True
@@ -189,6 +189,11 @@ def crete_fastapi_auth_action(
             prev = _action_deny
 
     return nxt(prev, action, settings, *args, **kwargs)
+
+
+# Правильное написание (опечатка выше оставлена для совместимости).
+def create_fastapi_auth_action(nxt, prev=None, action='', settings=None, *args, **kwargs):
+    return crete_fastapi_auth_action(nxt, prev, action, settings, *args, **kwargs)
 
 
 _rule_set: Optional[_RuleSet] = None

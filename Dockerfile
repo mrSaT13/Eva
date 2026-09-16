@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN groupadd --gid 1001 eva && useradd --create-home eva --uid 1001 --gid eva
 
-RUN mkdir -p /eva/config /eva/data && chown -R 1001:1001 /eva
+RUN mkdir -p /eva/data && chown -R 1001:1001 /eva
 
 COPY ./requirements.txt /tmp/requirements.txt
 COPY ./eva_plugin_llm/requirements.txt /tmp/eva_plugin_llm_requirements.txt
@@ -40,7 +40,10 @@ COPY --chown=1001:1001 resources/ico.png ./eva_plugin_web_face_frontend/frontend
 
 EXPOSE 8086
 
-VOLUME ["/eva/config", "/eva/data"]
-ENV EVA_HOME=/eva/data
+VOLUME ["/eva/data"]
+ENV EVA_HOME=/eva/data PYTHONUNBUFFERED=1
 
-ENTRYPOINT ["python", "-m", "eva", "-T", "web"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8086/api/config/configs/web_face_frontend', timeout=4)" || exit 1
+
+ENTRYPOINT ["python", "-m", "eva", "-T", "web", "-d", "/home/eva/config"]

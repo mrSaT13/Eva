@@ -184,7 +184,9 @@ class WebFacePlugin(MagicPlugin):
 
                 if first_msg.get('type') != MT_NEGOTIATE_REQUEST:
                     self._logger.warning("Ожидался negotiate/request, получено: %s", first_msg.get('type'))
-                    first_msg = {'type': MT_NEGOTIATE_REQUEST, 'protocols': [['in.text-direct'], ['out.text-plain']]}
+                    raise ValueError(
+                        f"Ожидался {MT_NEGOTIATE_REQUEST}, получено: {first_msg.get('type')}"
+                    )
 
                 await event_loop.run_in_executor(
                     None,

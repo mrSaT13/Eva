@@ -16,11 +16,13 @@ version = '0.1.0'
 class _Config(TypedDict):
     api_url: str
     api_key: Optional[str]
+    timeout: float
 
 
 config: _Config = {
     'api_url': 'https://translate.terraprint.co/translate',
     'api_key': None,
+    'timeout': 10.0,
 }
 
 config_comment = """
@@ -66,8 +68,15 @@ class _LibretranslateTranslationProvider(TranslationProvider):
             }
         )
 
-        with urlopen(req) as res:
-            data = json.load(res)
+        try:
+            with urlopen(req, timeout=config.get('timeout', 10.0)) as res:
+                data = json.load(res)
+        except Exception:
+            _logger.exception(
+                "Перевод %s -> %s не удался (url=%s)",
+                source_language, target_language, config.get('api_url'),
+            )
+            return text
 
         _logger.debug(
             "Перевод с %s на %s: '%s' -> %s",
@@ -77,7 +86,11 @@ class _LibretranslateTranslationProvider(TranslationProvider):
             data,
         )
 
-        return data.get('translatedText')
+        translated = data.get('translatedText')
+        if not isinstance(translated, str) or not translated:
+            _logger.warning("Пустой ответ перевода, возвращаю исходный текст")
+            return text
+        return translated
 
 
 def get_translation_provider(nxt, prev, settings, *args, **kwargs):

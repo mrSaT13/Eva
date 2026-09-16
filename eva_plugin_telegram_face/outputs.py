@@ -1,4 +1,5 @@
 from typing import Any, Optional, Iterable
+from logging import getLogger
 
 from telebot import TeleBot  # type: ignore
 from telebot.types import Chat, Message  # type: ignore
@@ -6,6 +7,8 @@ from telebot.types import Chat, Message  # type: ignore
 from eva.brain.abc import TextOutputChannel, AudioOutputChannel
 from eva.constants.labels import pure_text_channel_labels
 from eva.utils.audio_converter import AudioConverter, ConversionError
+
+_logger = getLogger('face_telegram')
 
 
 def _args_to_send_message(
@@ -41,10 +44,13 @@ class ChatTextChannel(TextOutputChannel):
         self._chat = chat
 
     def send(self, text: str, **kwargs):
-        self._bot.send_message(
-            self._chat.id,
-            **_args_to_send_message(text, **kwargs),
-        )
+        try:
+            self._bot.send_message(
+                self._chat.id,
+                **_args_to_send_message(text, **kwargs),
+            )
+        except Exception:
+            _logger.exception("Telegram send_message в чат %s не удался", getattr(self._chat, 'id', '?'))
 
     @property
     def meta(self):
@@ -91,11 +97,15 @@ class BroadcastTextChannel(TextOutputChannel):
         sent = False
 
         for chat_id in self._chat_ids:
-            self._bot.send_message(
-                chat_id,
-                **args,
-            )
-            sent = True
+            try:
+                self._bot.send_message(
+                    chat_id,
+                    **args,
+                )
+                sent = True
+            except Exception:
+                _logger.exception("Telegram broadcast в чат %s не удался, продолжаю", chat_id)
+                continue
 
         if not sent:
             raise Exception("Не удалось отправить сообщение ни в один чат")
@@ -138,12 +148,15 @@ class AudioChannel(AudioOutputChannel):
             file_path: str,
             **kwargs
     ):
-        with open(file_path, 'rb') as file:
-            self._bot.send_audio(
-                self._chat.id,
-                file,
-                **self._args_to_telebot(**kwargs),
-            )
+        try:
+            with open(file_path, 'rb') as file:
+                self._bot.send_audio(
+                    self._chat.id,
+                    file,
+                    **self._args_to_telebot(**kwargs),
+                )
+        except Exception:
+            _logger.exception("Telegram send_audio в чат %s не удался", getattr(self._chat, 'id', '?'))
 
 
 class VoiceChannel(AudioChannel):
@@ -172,12 +185,15 @@ class VoiceChannel(AudioChannel):
         except ConversionError:
             return super().send_file(file_path, **kwargs)
 
-        with open(converted, 'rb') as file:
-            self._bot.send_voice(
-                self._chat.id,
-                file,
-                **self._args_to_telebot(**kwargs),
-            )
+        try:
+            with open(converted, 'rb') as file:
+                self._bot.send_voice(
+                    self._chat.id,
+                    file,
+                    **self._args_to_telebot(**kwargs),
+                )
+        except Exception:
+            _logger.exception("Telegram send_voice в чат %s не удался", getattr(self._chat, 'id', '?'))
 
 
 class AudioReplyChannel(AudioOutputChannel):

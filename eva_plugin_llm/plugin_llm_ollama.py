@@ -35,6 +35,10 @@ def get_lc_llm(
         settings = llm_settings.copy()
         settings.pop("type")
 
-        llm = ChatOllama(**{**config, **settings})
+        merged = {**config, **settings}
+        if merged.get('base_url') is None:
+            merged.pop('base_url', None)
+
+        llm = ChatOllama(**merged)
 
     return nxt(llm, llm_settings, *args, **kwargs)

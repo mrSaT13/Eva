@@ -6,7 +6,7 @@ name = "llm_openai"
 version = "0.1.0"
 
 config: dict[str, Any] = {
-    "url": None,
+    "base_url": None,
     "model": "gpt-4o-mini",
 }
 
@@ -39,6 +39,15 @@ def get_lc_llm(
         settings = llm_settings.copy()
         settings.pop("type")
 
-        llm = ChatOpenAI(**{**config, **settings})
+        merged = {**config, **settings}
+        # Совместимость со старым ключом `url` + не передаём None/base_url=None
+        if 'url' in merged and 'base_url' not in merged:
+            merged['base_url'] = merged.pop('url')
+        else:
+            merged.pop('url', None)
+        if merged.get('base_url') is None:
+            merged.pop('base_url', None)
+
+        llm = ChatOpenAI(**merged)
 
     return nxt(llm, llm_settings, *args, **kwargs)

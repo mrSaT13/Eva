@@ -40,7 +40,7 @@ const testLLM = async () => {
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
 
-            if (data.type === 'negotiate_agree') {
+            if (data.type === 'negotiate/agree') {
                 setTimeout(() => {
                     ws.send(JSON.stringify({
                         type: 'in.text-direct/text',
@@ -104,7 +104,7 @@ const testWebSocket = async () => {
             const data = JSON.parse(event.data);
             wsMessages.value.push(`← ${data.type}`);
 
-            if (data.type === 'negotiate_agree') {
+            if (data.type === 'negotiate/agree') {
                 wsMessages.value.push('✓ Протоколы согласованы');
                 setTimeout(() => {
                     ws.send(JSON.stringify({ type: 'in.text-direct/text', text: 'привет' }));

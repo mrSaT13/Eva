@@ -24,6 +24,8 @@ class PluginDiscoveryPlugin(MagicPlugin):
         pluginPaths: list[str]
         appendPythonPath: list[str]
         excludePlugins: list[str]
+        allowPipAutoInstall: bool
+        pipInstallTimeout: float
 
     config: _Config = {
         'pluginPaths': [
@@ -36,7 +38,12 @@ class PluginDiscoveryPlugin(MagicPlugin):
             "{eva_home}/plugins",
             "{eva_home}/deps",
         ],
-        "excludePlugins": []
+        "excludePlugins": [],
+        # Авто-установка pip-зависимостей при загрузке плагина через веб-API.
+        # По-умолчанию ВЫКЛЮЧЕНА: ставить пакеты из чужого кода — RCE-вектор.
+        # Включите только в доверенном контуре (allowPipAutoInstall: true).
+        "allowPipAutoInstall": False,
+        "pipInstallTimeout": 120.0,
     }
 
     config_comment = """
@@ -48,6 +55,10 @@ class PluginDiscoveryPlugin(MagicPlugin):
                             Если зависимости плагинов ставятся в папку, не находящуюся в PYTHONPATH, то путь к этой
                             папке нужно указать здесь.
     - `excludePlugins`    - список плагинов, которые загружать не нужно. См. далее.
+    - `allowPipAutoInstall` - авто-установка pip-зависимостей загружаемого плагина (по-умолчанию false).
+                             Включайте только если загружаете плагины из доверенных источников:
+                             pip-пакет из чужого кода может выполнить произвольный код при установке.
+    - `pipInstallTimeout` - таймаут одной pip-установки в секундах.
     
     ## Отключение плагинов
 
@@ -211,6 +222,13 @@ class PluginDiscoveryPlugin(MagicPlugin):
 
         r: APIRouter = router
 
+        def _is_importable(mod: str) -> bool:
+            try:
+                __import__(mod)
+                return True
+            except ImportError:
+                return False
+
         def _safe_plugin_path(plugins_dir: str, filename: str) -> str:
             # Защита от path traversal: только basename, только plugin_*.py
             import os
@@ -369,13 +387,53 @@ class PluginDiscoveryPlugin(MagicPlugin):
                                     missing.append(mod)
 
                 installed = []
-                # Авто-установка pip-пакетов из загруженного кода отключена (RCE-вектор).
-                # Только сообщаем о недостающих модулях — ставит их администратор вручную.
-                if missing:
+                auto_install = bool(self.config.get('allowPipAutoInstall', False))
+                if missing and auto_install:
+                    import subprocess
+                    pip_timeout = float(self.config.get('pipInstallTimeout', 120.0))
+                    pkg_map = {'cv2': 'opencv-python', 'PIL': 'Pillow', 'yaml': 'pyyaml',
+                                'dateutil': 'python-dateutil', 'bs4': 'beautifulsoup4',
+                                'mutagen': 'mutagen', 'speech_recognition': 'SpeechRecognition',
+                                'sounddevice': 'sounddevice', 'soundfile': 'soundfile',
+                                'httpx': 'httpx', 'serial': 'pyserial', 'lxml': 'lxml',
+                                'feedparser': 'feedparser', 'requests': 'requests',
+                                'aiohttp': 'aiohttp', 'selenium': 'selenium',
+                                'spotipy': 'spotipy', 'pyttsx3': 'pyttsx3',
+                                'pygame': 'pygame', 'pydub': 'pydub', 'gtts': 'gTTS'}
+                    for mod in missing:
+                        pkg = pkg_map.get(mod, mod)
+                        try:
+                            result = subprocess.run(
+                                [sys.executable, '-m', 'pip', 'install', '--quiet', pkg],
+                                capture_output=True, text=True, timeout=pip_timeout,
+                            )
+                            if result.returncode == 0:
+                                try:
+                                    __import__(mod)
+                                    installed.append(pkg)
+                                except ImportError:
+                                    self._logger.warning("pip install %s ok, но импорт %s всё ещё недоступен", pkg, mod)
+                            else:
+                                self._logger.warning("pip install %s failed: %s", pkg, result.stderr[:200])
+                        except Exception as e:
+                            self._logger.warning("pip install %s error: %s", pkg, e)
+                    # Перепроверяем что реально осталось недоступным
+                    missing = [m for m in missing if not _is_importable(m)]
+                elif missing:
                     self._logger.warning("Загружен плагин %s, отсутствуют модули: %s", filename, missing)
 
+                if not missing and installed:
+                    note = "Зависимости установлены автоматически."
+                elif missing and auto_install:
+                    note = ("Часть зависимостей установить не удалось, "
+                            "доставьте их вручную и перезапустите.")
+                elif missing:
+                    note = ("Авто-установка зависимостей отключена (allowPipAutoInstall=false). "
+                            "Установите недостающие пакеты вручную и перезапустите.")
+                else:
+                    note = "Все зависимости на месте."
                 return {"status": "ok", "filename": filename, "path": target, "missing": missing, "installed": installed,
-                        "note": "Авто-установка зависимостей отключена. Установите недостающие пакеты вручную и перезапустите."}
+                        "auto_install": auto_install, "note": note}
             except Exception as e:
                 return {"status": "error", "error": str(e)}
 

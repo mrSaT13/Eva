@@ -3,6 +3,7 @@ __pycache__/
 *.pyo
 .env
 .env.*
+!.env.example
 node_modules/
 frontend/dist/
 eva_plugin_web_face_frontend/frontend-dist/
@@ -10,7 +11,8 @@ irene_plugin_web_face_frontend/frontend-dist/
 *.egg-info/
 .venv/
 venv/
-eva/
+# NOTE: не игнорим исходники eva/ — это ядро проекта
+# локальные данные/креды ниже:
 credentials/
 _orig/
 *.log

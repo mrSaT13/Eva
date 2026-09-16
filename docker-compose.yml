@@ -8,7 +8,7 @@ services:
     ports:
       - "8086:8086"
     volumes:
-      - eva-config:/home/eva/config
+      # Конфиги/данные живут в EVA_HOME=/eva/data -> /eva/data/config
       - eva-data:/eva/data
     environment:
       - EVA_HOME=/eva/data
@@ -33,7 +33,6 @@ services:
   #     - ha-config:/config
 
 volumes:
-  eva-config:
   eva-data:
   # lmstudio-data:
   # ha-config:
