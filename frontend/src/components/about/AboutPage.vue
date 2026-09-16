@@ -85,17 +85,20 @@ import TelegramIcon from '~icons/simple-icons/telegram';
 }
 
 .logo {
-    width: 80px;
-    height: 80px;
-    border-radius: 20px;
-    background: linear-gradient(135deg, var(--accent), #b388ff);
+    width: 88px;
+    height: 88px;
+    border-radius: 28px;
+    background: linear-gradient(135deg, #7c4dff 0%, #b388ff 50%, #40c4ff 100%);
+    background-size: 200% 200%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 36px;
-    font-weight: 700;
+    font-size: 38px;
+    font-weight: 800;
     color: white;
     margin: 0 auto 16px;
+    box-shadow: 0 14px 48px rgba(124, 77, 255, 0.5), inset 0 1px 0 rgba(255,255,255,0.4);
+    animation: eva-gradient-pan 6s ease infinite, eva-float 5s ease-in-out infinite;
 }
 
 .about-header h1 {
@@ -110,9 +113,13 @@ import TelegramIcon from '~icons/simple-icons/telegram';
 }
 
 .about-section {
-    background: var(--bg-card);
-    border-radius: var(--radius);
+    background: rgba(24, 24, 36, 0.68);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 22px);
     padding: 20px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+    animation: eva-fade-slide-up 0.4s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1));
 }
 
 .about-section h2 {
@@ -154,15 +161,18 @@ import TelegramIcon from '~icons/simple-icons/telegram';
     justify-content: center;
     gap: 8px;
     padding: 16px;
-    background: var(--bg-card);
-    border-radius: var(--radius);
+    background: rgba(24,24,36,0.7);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 22px);
     color: var(--text-primary);
-    transition: background 0.2s, transform 0.2s;
+    transition: all 0.25s var(--ease-spring, cubic-bezier(0.34,1.4,0.64,1));
 }
 
 .link-card:hover {
-    background: var(--bg-hover);
-    transform: translateY(-2px);
+    background: rgba(32,32,48,0.9);
+    border-color: rgba(124,77,255,0.45);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(124,77,255,0.25);
 }
 
 .about-footer {

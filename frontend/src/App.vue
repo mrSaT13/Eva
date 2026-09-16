@@ -63,34 +63,46 @@ const onChangeTab = (tab: 'chat' | 'settings') => {
 
 <style>
 :root {
-    --bg-primary: #0f0f0f;
-    --bg-secondary: #1a1a1a;
-    --bg-card: #242424;
-    --bg-input: #2a2a2a;
-    --bg-hover: #333;
-    --bg-nav: #141414;
-    --text-primary: #e0e0e0;
-    --text-secondary: #a0a0a0;
-    --text-muted: #666;
+    --bg-primary: #0b0b10;
+    --bg-secondary: #14141c;
+    --bg-card: rgba(30, 30, 42, 0.72);
+    --bg-input: rgba(255, 255, 255, 0.06);
+    --bg-hover: rgba(255, 255, 255, 0.09);
+    --bg-nav: rgba(14, 14, 20, 0.78);
+    --text-primary: #f2f1fa;
+    --text-secondary: #b3b0c7;
+    --text-muted: #6f6c87;
     --accent: #7c4dff;
+    --accent-2: #b388ff;
+    --accent-3: #40c4ff;
     --accent-hover: #9e7bff;
-    --accent-dim: rgba(124, 77, 255, 0.15);
-    --msg-in: #1e3a1e;
-    --msg-out: #2a1e3a;
-    --border: #333;
+    --accent-dim: rgba(124, 77, 255, 0.16);
+    --gradient-accent: linear-gradient(135deg, #7c4dff 0%, #b388ff 48%, #40c4ff 100%);
+    --gradient-bg: radial-gradient(1200px 600px at 15% -10%, rgba(124,77,255,0.18), transparent 60%),
+        radial-gradient(900px 500px at 90% 0%, rgba(64,196,255,0.12), transparent 55%),
+        radial-gradient(800px 600px at 50% 110%, rgba(179,136,255,0.1), transparent 60%);
+    --msg-in: rgba(46, 125, 50, 0.22);
+    --msg-out: linear-gradient(135deg, rgba(124,77,255,0.32), rgba(64,196,255,0.2));
+    --border: rgba(255, 255, 255, 0.08);
     --shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-    --radius: 12px;
-    --radius-sm: 8px;
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(124, 77, 255, 0.15);
+    --shadow-glow: 0 0 0 1px rgba(124,77,255,0.25), 0 8px 32px rgba(124,77,255,0.35);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --radius-lg: 22px;
+    --radius-pill: 999px;
     --header-h: 64px;
-    --nav-h: 60px;
+    --nav-h: 68px;
     --z-header: 100;
     --z-nav: 100;
     --z-overlay: 200;
-    --color-error: #ff5252;
-    --color-success: #4caf50;
-    --color-warning: #ff9800;
-    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --color-error: #ff6b6b;
+    --color-success: #51e08c;
+    --color-warning: #ffb74d;
+    --font: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
     --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+    --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -101,23 +113,31 @@ html, body, #app {
 
 body {
     background: var(--bg-primary);
+    background-image: var(--gradient-bg);
+    background-attachment: fixed;
     color: var(--text-primary);
     font-family: var(--font);
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.55;
+    letter-spacing: 0.01em;
     -webkit-font-smoothing: antialiased;
     overflow: hidden;
 }
 
-a { color: var(--accent); text-decoration: none; }
+a { color: var(--accent-2); text-decoration: none; }
 a:hover { color: var(--accent-hover); }
 
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-secondary); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::selection { background: rgba(124,77,255,0.45); color: #fff; }
 
-.icon-button, .icon-button:visited { color: var(--text-secondary); transition: color 0.2s; }
-.icon-button:hover:not(:disabled) { color: var(--accent); }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(124,77,255,0.5), rgba(64,196,255,0.35));
+    border-radius: 8px;
+}
+
+.icon-button, .icon-button:visited { color: var(--text-secondary); transition: color 0.2s, transform 0.2s var(--ease-spring); }
+.icon-button:hover:not(:disabled) { color: var(--accent-2); transform: translateY(-1px); }
 </style>
 
 <style scoped>
@@ -132,61 +152,101 @@ a:hover { color: var(--accent-hover); }
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    /* header (64) сверху и nav (60) снизу — отступы, чтобы ничего не уезжало под них */
+    /* header (64) сверху и nav (68) снизу — отступы, чтобы ничего не уезжало под них */
     padding-top: var(--header-h);
     padding-bottom: var(--nav-h);
     -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    position: relative;
+    z-index: 1;
 }
 
 .tab-pane {
     min-height: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 16px;
+    animation: eva-fade-slide-up 0.35s var(--ease-smooth);
 }
 
 .bottom-nav {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(420px, calc(100% - 24px));
     height: var(--nav-h);
     background: var(--bg-nav);
-    border-top: 1px solid var(--border);
+    backdrop-filter: blur(20px) saturate(170%);
+    -webkit-backdrop-filter: blur(20px) saturate(170%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
     display: flex;
     justify-content: center;
-    gap: 0;
+    gap: 6px;
     z-index: var(--z-nav);
-    padding-bottom: env(safe-area-inset-bottom, 0);
+    padding: 6px;
+    padding-bottom: calc(6px + env(safe-area-inset-bottom, 0));
+    box-shadow: var(--shadow-lg);
+}
+
+.bottom-nav::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(124,77,255,0.35), rgba(64,196,255,0.18), transparent 60%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.7;
 }
 
 .nav-item {
     flex: 1;
-    max-width: 120px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    background: none;
+    gap: 8px;
+    background: transparent;
     border: none;
+    border-radius: var(--radius-pill);
     color: var(--text-muted);
     cursor: pointer;
-    transition: color 0.2s;
-    padding: 8px;
+    transition: all 0.25s var(--ease-smooth);
+    padding: 10px 14px;
+    position: relative;
 }
 
 .nav-item:hover {
     color: var(--text-secondary);
+    background: var(--bg-hover);
 }
 
 .nav-item.active {
-    color: var(--accent);
+    color: #fff;
+    background: var(--gradient-accent);
+    background-size: 180% 180%;
+    box-shadow: 0 4px 20px rgba(124, 77, 255, 0.45);
+}
+
+.nav-item.active:hover {
+    filter: brightness(1.08);
 }
 
 .nav-icon {
     font-size: 22px;
+    width: 22px;
+    height: 22px;
+    display: flex;
 }
 
 .nav-label {
-    font-size: 11px;
-    font-weight: 500;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
 }
 </style>

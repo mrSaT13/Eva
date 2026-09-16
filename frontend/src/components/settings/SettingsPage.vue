@@ -246,8 +246,13 @@ watch(settings, () => {
 
 h1 {
     font-size: 24px;
-    font-weight: 600;
+    font-weight: 800;
     margin-bottom: 8px;
+    letter-spacing: 0.01em;
+    background: linear-gradient(135deg, #fff, #b388ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .hint {
@@ -257,9 +262,19 @@ h1 {
 }
 
 .settings-section {
-    background: var(--bg-card);
-    border-radius: var(--radius);
+    background: rgba(24, 24, 36, 0.68);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 22px);
     padding: 20px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+    transition: border-color 0.25s, transform 0.25s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1));
+    animation: eva-fade-slide-up 0.35s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1));
+}
+
+.settings-section:hover {
+    border-color: rgba(124,77,255,0.3);
 }
 
 .section-header {
@@ -424,22 +439,25 @@ h1 {
     justify-content: center;
     gap: 8px;
     padding: 14px 24px;
-    background: var(--accent);
+    background: linear-gradient(135deg, #7c4dff, #40c4ff);
+    background-size: 180% 180%;
     color: white;
     border: none;
-    border-radius: var(--radius);
+    border-radius: var(--radius-pill, 999px);
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 700;
     cursor: pointer;
-    transition: background 0.2s, transform 0.2s;
+    transition: all 0.25s var(--ease-spring, cubic-bezier(0.34,1.4,0.64,1));
+    box-shadow: 0 6px 24px rgba(124,77,255,0.4), inset 0 1px 0 rgba(255,255,255,0.3);
 }
 
 .save-btn:hover {
-    background: var(--accent-hover);
+    filter: brightness(1.08);
     transform: translateY(-2px);
+    box-shadow: 0 10px 32px rgba(124,77,255,0.5);
 }
 
 .save-btn:active {
-    transform: translateY(0);
+    transform: translateY(0) scale(0.98);
 }
 </style>

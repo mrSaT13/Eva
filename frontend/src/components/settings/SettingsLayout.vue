@@ -71,50 +71,62 @@ const sections = [
 }
 
 .settings-sidebar {
-    width: 200px;
-    background: var(--bg-secondary);
-    border-right: 1px solid var(--border);
-    padding: 20px 0;
+    width: 216px;
+    background: rgba(20, 20, 30, 0.6);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 22px);
+    padding: 16px 10px;
     flex-shrink: 0;
+    align-self: flex-start;
+    position: sticky;
+    top: 12px;
+    box-shadow: var(--shadow-card, 0 8px 28px rgba(0,0,0,0.35));
 }
 
 .settings-sidebar h2 {
-    font-size: 16px;
-    font-weight: 600;
-    padding: 0 20px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    padding: 4px 14px 12px;
     border-bottom: 1px solid var(--border);
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 .settings-nav {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
 }
 
 .nav-btn {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 12px 20px;
-    background: none;
-    border: none;
+    padding: 11px 14px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 12px;
     color: var(--text-secondary);
     font-size: 14px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.22s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1));
     text-align: left;
 }
 
 .nav-btn:hover {
     background: var(--bg-hover);
     color: var(--text-primary);
+    transform: translateX(2px);
 }
 
 .nav-btn.active {
-    background: var(--accent-dim);
-    color: var(--accent);
-    border-right: 3px solid var(--accent);
+    background: linear-gradient(135deg, rgba(124,77,255,0.28), rgba(64,196,255,0.14));
+    color: #fff;
+    border-color: rgba(124,77,255,0.4);
+    box-shadow: 0 4px 18px rgba(124,77,255,0.25);
 }
 
 .nav-btn span {
@@ -125,19 +137,20 @@ const sections = [
     flex: 1;
     /* Скроллит родитель .main-content, чтобы не было двойного скролла */
     min-width: 0;
-    padding: 16px 24px 32px;
+    padding: 4px 4px 32px 20px;
+    animation: eva-fade-in 0.3s ease;
 }
 
 @media (max-width: 768px) {
     .settings-layout {
         flex-direction: column;
+        gap: 12px;
     }
 
     .settings-sidebar {
         width: 100%;
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-        padding: 12px 0;
+        position: static;
+        padding: 10px;
     }
 
     .settings-nav {

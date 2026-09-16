@@ -10,7 +10,6 @@ import type { ActorRef } from 'xstate';
 import SendIcon from '~icons/material-symbols/send'
 import CameraIcon from '~icons/material-symbols/camera'
 import CloseIcon from '~icons/material-symbols/close'
-import NoMessagesIcon from '~icons/mdi/message-processing-outline'
 
 const inputValue = ref('');
 const eventBus = inject(eventBusKey);
@@ -70,12 +69,18 @@ const sendCommand = () => {
                 <Message :message="message" />
             </template>
             <div v-if="historySm.state.value.context.messages.length === 0" class="empty-state">
-                <div class="empty-icon">
-                    <NoMessagesIcon />
+                <div class="empty-orb">
+                    <div class="orb-core">E</div>
+                    <div class="orb-ring"></div>
                 </div>
                 <h3>Eva</h3>
                 <p>Начните диалог с голосовым ассистентом</p>
-                <p class="hint">Скажите "Ева" или напишите сообщение</p>
+                <p class="hint">Скажите «Ева» или напишите сообщение</p>
+                <div class="empty-chips">
+                    <span class="chip">Включи свет</span>
+                    <span class="chip">Поставь таймер</span>
+                    <span class="chip">Какая погода?</span>
+                </div>
             </div>
             <div v-if="historySm.state.value.context.thinking" class="message message-out thinking-bubble">
                 <div class="message-bubble thinking">
@@ -119,24 +124,27 @@ const sendCommand = () => {
 .dialog-page {
     display: flex;
     flex-direction: column;
-    min-height: calc(100vh - var(--header-h, 64px) - var(--nav-h, 60px));
+    min-height: calc(100vh - var(--header-h, 64px) - var(--nav-h, 68px));
     position: relative;
+    max-width: 760px;
+    margin: 0 auto;
+    width: 100%;
 }
 
 .sticky-top {
     position: sticky;
     top: 0;
     z-index: 10;
-    background: var(--bg-primary, #000);
+    background: transparent;
+    padding-top: 12px;
 }
 
 .messages-feed {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    /* Отступ снизу, чтобы последнее сообщение не уезжало под input-bar */
-    padding-bottom: 24px;
+    gap: 14px;
+    padding: 12px 4px 24px;
 }
 
 .empty-state {
@@ -148,33 +156,103 @@ const sendCommand = () => {
     text-align: center;
     color: var(--text-secondary);
     gap: 8px;
-    min-height: 50vh;
+    min-height: 52vh;
+    animation: eva-fade-slide-up 0.5s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1));
 }
 
-.empty-icon {
-    font-size: 48px;
-    color: var(--accent);
-    margin-bottom: 16px;
-    opacity: 0.6;
+.empty-orb {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
 }
 
-.empty-state h3 { font-size: 24px; font-weight: 600; color: var(--text-primary); }
+.orb-core {
+    width: 76px;
+    height: 76px;
+    border-radius: 26px;
+    background: linear-gradient(135deg, #7c4dff 0%, #b388ff 50%, #40c4ff 100%);
+    background-size: 200% 200%;
+    animation: eva-gradient-pan 6s ease infinite, eva-float 4s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    font-weight: 800;
+    color: #fff;
+    box-shadow: 0 12px 44px rgba(124, 77, 255, 0.5), inset 0 1px 0 rgba(255,255,255,0.35);
+}
+
+.orb-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, rgba(124,77,255,0.5), rgba(64,196,255,0.35), transparent 65%, rgba(124,77,255,0.5));
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+    animation: eva-orb-spin 9s linear infinite;
+    opacity: 0.9;
+}
+
+.empty-state h3 {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    background: linear-gradient(135deg, #fff, #b388ff 60%, #40c4ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 .empty-state p { font-size: 14px; color: var(--text-secondary); }
-.empty-state .hint { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+.empty-state .hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+.empty-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.chip {
+    font-size: 12px;
+    padding: 8px 14px;
+    border-radius: var(--radius-pill, 999px);
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    backdrop-filter: blur(12px);
+    transition: all 0.25s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1));
+    cursor: default;
+}
+
+.chip:hover {
+    border-color: rgba(124,77,255,0.5);
+    color: var(--text-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(124,77,255,0.25);
+}
 
 .cameras-panel {
     position: fixed;
-    bottom: calc(var(--nav-h, 60px) + 76px);
+    bottom: calc(var(--nav-h, 68px) + 76px);
     left: 0;
     right: 0;
     max-width: 600px;
     margin: 0 auto;
-    background: var(--bg-secondary);
+    background: rgba(22, 22, 32, 0.85);
+    backdrop-filter: blur(20px) saturate(170%);
+    -webkit-backdrop-filter: blur(20px) saturate(170%);
     border: 1px solid var(--border);
-    border-radius: var(--radius) var(--radius) 0 0;
+    border-radius: var(--radius-lg, 22px);
+    box-shadow: var(--shadow-lg, 0 12px 40px rgba(0,0,0,0.45));
     z-index: 50;
-    max-height: 200px;
+    max-height: 240px;
     overflow-y: auto;
+    animation: eva-fade-slide-up 0.3s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1));
 }
 
 .cameras-header {
@@ -214,28 +292,46 @@ const sendCommand = () => {
     align-items: center;
     gap: 8px;
     padding: 10px 12px;
-    background: var(--bg-card);
-    border: none;
-    border-radius: var(--radius-sm);
+    background: var(--bg-input);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm, 10px);
     color: var(--text-primary);
     font-size: 13px;
     cursor: pointer;
     text-align: left;
+    transition: all 0.22s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1));
 }
 
 .camera-btn:hover {
     background: var(--bg-hover);
+    border-color: rgba(124,77,255,0.35);
+    transform: translateX(3px);
 }
 
 /*
-  ВАЖНО: input-bar НЕ position:fixed — теперь он в нормальном потоке,
-  внизу страницы. Это убирает перекрытие нижней навигацией.
+  Floating glass input-pill, sticky внизу
 */
 .input-bar {
     display: flex;
     gap: 8px;
-    padding: 12px 0;
+    align-items: center;
+    padding: 10px;
     margin-top: auto;
+    position: sticky;
+    bottom: 8px;
+    z-index: 20;
+    background: rgba(20, 20, 30, 0.78);
+    backdrop-filter: blur(20px) saturate(170%);
+    -webkit-backdrop-filter: blur(20px) saturate(170%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill, 999px);
+    box-shadow: var(--shadow-lg, 0 12px 40px rgba(0,0,0,0.45));
+    transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.input-bar:focus-within {
+    border-color: rgba(124,77,255,0.55);
+    box-shadow: 0 0 0 1px rgba(124,77,255,0.3), 0 12px 44px rgba(124,77,255,0.3);
 }
 
 .icon-btn {
@@ -250,29 +346,30 @@ const sendCommand = () => {
     color: var(--text-secondary);
     cursor: pointer;
     flex-shrink: 0;
-    transition: all 0.2s;
+    transition: all 0.25s var(--ease-spring, cubic-bezier(0.34,1.4,0.64,1));
 }
 
 .icon-btn:hover {
     background: var(--bg-hover);
     color: var(--text-primary);
+    transform: translateY(-1px) scale(1.04);
+    border-color: rgba(124,77,255,0.4);
 }
+
+.icon-btn:active { transform: scale(0.94); }
 
 .command-input {
     flex: 1 1 auto;
     min-width: 0;
-    background: var(--bg-input);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    padding: 12px 8px;
     font-size: 15px;
     color: var(--text-primary);
     outline: none;
-    transition: border-color 0.2s;
 }
 
 .command-input::placeholder { color: var(--text-muted); }
-.command-input:focus { border-color: var(--accent); }
 
 .send-btn {
     display: flex;
@@ -281,23 +378,45 @@ const sendCommand = () => {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: var(--accent);
+    background: linear-gradient(135deg, #7c4dff 0%, #9e7bff 50%, #40c4ff 130%);
+    background-size: 180% 180%;
     color: white;
     border: none;
     cursor: pointer;
     flex-shrink: 0;
-    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 4px 20px rgba(124, 77, 255, 0.5), inset 0 1px 0 rgba(255,255,255,0.3);
+    transition: all 0.25s var(--ease-spring, cubic-bezier(0.34,1.4,0.64,1));
 }
 
-.send-btn:hover:not(:disabled) { background: var(--accent-hover); transform: scale(1.05); }
-.send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.send-btn:active:not(:disabled) { transform: scale(0.95); }
+.send-btn:hover:not(:disabled) {
+    filter: brightness(1.1);
+    transform: scale(1.06) translateY(-1px);
+    box-shadow: 0 8px 28px rgba(124, 77, 255, 0.6);
+    animation: eva-gradient-pan 2s ease infinite;
+}
+.send-btn:disabled { opacity: 0.35; cursor: not-allowed; filter: grayscale(0.4); }
+.send-btn:active:not(:disabled) { transform: scale(0.93); }
 
-.thinking-bubble { animation: fadeIn 0.2s ease-out; }
-.thinking { display: flex; gap: 4px; align-items: center; padding: 14px 18px !important; }
+.thinking-bubble { animation: eva-fade-slide-up 0.25s ease-out; }
+.thinking {
+    display: flex; gap: 5px; align-items: center; padding: 16px 20px !important;
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+}
+.thinking::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(124,77,255,0.14), transparent);
+    background-size: 400px 100%;
+    animation: eva-shimmer 1.6s linear infinite;
+}
 .dot {
     width: 8px; height: 8px; border-radius: 50%;
-    background: var(--text-muted); animation: bounce 1.4s infinite ease-in-out;
+    background: linear-gradient(135deg, var(--accent, #7c4dff), var(--accent-3, #40c4ff));
+    animation: bounce 1.4s infinite ease-in-out;
 }
 .dot:nth-child(1) { animation-delay: 0s; }
 .dot:nth-child(2) { animation-delay: 0.2s; }

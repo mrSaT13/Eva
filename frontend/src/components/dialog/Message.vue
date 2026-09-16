@@ -102,26 +102,49 @@ onUnmounted(() => {
 .message {
     display: flex;
     flex-direction: column;
-    max-width: 85%;
-    animation: fadeIn 0.2s ease-out;
+    max-width: 82%;
+    animation: eva-fade-slide-up 0.32s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1));
 }
 
 .message-in { align-self: flex-start; }
 .message-out { align-self: flex-end; }
-.message-system { align-self: center; max-width: 90%; }
+.message-system { align-self: center; max-width: 92%; }
 
-.message-image { margin-bottom: 4px; }
+.message-image { margin-bottom: 6px; }
 .message-image img {
-    max-width: 100%; max-height: 300px;
-    border-radius: 12px; object-fit: cover;
+    max-width: 100%; max-height: 320px;
+    border-radius: 18px; object-fit: cover;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-card, 0 8px 28px rgba(0,0,0,0.35));
 }
 
 .message-bubble {
-    padding: 12px 16px; border-radius: 16px;
-    font-size: 14px; line-height: 1.5; word-break: break-word;
+    padding: 13px 17px; border-radius: 20px;
+    font-size: 14px; line-height: 1.6; word-break: break-word;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transition: transform 0.22s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1)), box-shadow 0.22s;
 }
-.message-in .message-bubble { background: var(--msg-in); border-bottom-left-radius: 4px; }
-.message-out .message-bubble { background: var(--msg-out); border-bottom-right-radius: 4px; }
+.message-bubble:hover { transform: translateY(-1px); }
+.message-in .message-bubble {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    border-bottom-left-radius: 6px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+}
+.message-out .message-bubble {
+    background: linear-gradient(135deg, rgba(124,77,255,0.38), rgba(64,196,255,0.22));
+    border: 1px solid rgba(124, 77, 255, 0.4);
+    border-bottom-right-radius: 6px;
+    box-shadow: 0 4px 22px rgba(124,77,255,0.22);
+}
+.message-system .message-bubble {
+    background: var(--accent-soft, rgba(124,77,255,0.1));
+    border: 1px dashed rgba(124,77,255,0.4);
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 12.5px;
+}
 
 .message-time {
     font-size: 10px; color: var(--text-muted);
@@ -130,25 +153,42 @@ onUnmounted(() => {
 .message-out .message-time { text-align: right; }
 
 .timer-widget {
-    background: var(--bg-card); border: 2px solid var(--accent);
-    border-radius: 16px; padding: 16px; min-width: 200px;
+    background: rgba(22, 22, 34, 0.8);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(124,77,255,0.4);
+    border-radius: 20px; padding: 18px; min-width: 210px;
+    box-shadow: 0 8px 32px rgba(124,77,255,0.22);
+    position: relative;
+    overflow: hidden;
+}
+.timer-widget::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #7c4dff, #40c4ff);
 }
 .timer-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .timer-icon { font-size: 20px; color: var(--accent); }
 .timer-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
 .timer-display {
-    font-size: 48px; font-weight: 700; text-align: center;
-    font-variant-numeric: tabular-nums; color: var(--accent);
+    font-size: 48px; font-weight: 800; text-align: center;
+    font-variant-numeric: tabular-nums;
+    background: linear-gradient(135deg, #b388ff, #40c4ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     letter-spacing: 2px;
 }
-.timer-display.finished { color: var(--text-muted); }
+.timer-display.finished { -webkit-text-fill-color: var(--text-muted); background: none; color: var(--text-muted); }
 .timer-progress {
-    height: 4px; background: var(--bg-input); border-radius: 2px;
+    height: 6px; background: rgba(255,255,255,0.08); border-radius: 4px;
     margin-top: 12px; overflow: hidden;
 }
 .timer-progress-bar {
-    height: 100%; background: var(--accent); border-radius: 2px;
+    height: 100%; background: linear-gradient(90deg, #7c4dff, #40c4ff); border-radius: 4px;
     transition: width 1s linear;
+    box-shadow: 0 0 12px rgba(124,77,255,0.6);
 }
 .timer-finished {
     text-align: center; margin-top: 8px;
@@ -156,7 +196,7 @@ onUnmounted(() => {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(10px) scale(0.99); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 </style>

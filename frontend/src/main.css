@@ -1,36 +1,66 @@
 :root {
-    --bg-primary: #0f0f0f;
-    --bg-secondary: #1a1a1a;
-    --bg-card: #242424;
-    --bg-input: #2a2a2a;
-    --bg-hover: #333;
+    --bg-primary: #0b0b10;
+    --bg-secondary: #14141c;
+    --bg-card: rgba(30, 30, 42, 0.72);
+    --bg-card-solid: #1e1e2a;
+    --bg-input: rgba(255, 255, 255, 0.06);
+    --bg-hover: rgba(255, 255, 255, 0.09);
+    --bg-nav: rgba(14, 14, 20, 0.78);
 
-    --text-primary: #e0e0e0;
-    --text-secondary: #a0a0a0;
-    --text-muted: #666;
+    --text-primary: #f2f1fa;
+    --text-secondary: #b3b0c7;
+    --text-muted: #6f6c87;
 
     --accent: #7c4dff;
+    --accent-2: #b388ff;
+    --accent-3: #40c4ff;
     --accent-hover: #9e7bff;
-    --accent-dim: rgba(124, 77, 255, 0.15);
+    --accent-dim: rgba(124, 77, 255, 0.16);
+    --accent-soft: rgba(124, 77, 255, 0.1);
 
-    --msg-in: #1e3a1e;
-    --msg-out: #2a1e3a;
+    --gradient-accent: linear-gradient(135deg, #7c4dff 0%, #b388ff 48%, #40c4ff 100%);
+    --gradient-accent-soft: linear-gradient(135deg, rgba(124,77,255,0.22), rgba(64,196,255,0.16));
+    --gradient-bg: radial-gradient(1200px 600px at 15% -10%, rgba(124,77,255,0.18), transparent 60%),
+        radial-gradient(900px 500px at 90% 0%, rgba(64,196,255,0.12), transparent 55%),
+        radial-gradient(800px 600px at 50% 110%, rgba(179,136,255,0.1), transparent 60%);
+    --gradient-border: linear-gradient(135deg, rgba(124,77,255,0.55), rgba(64,196,255,0.35));
 
-    --border: #333;
+    --glass-blur: blur(20px) saturate(170%);
+    --glass-bg: rgba(22, 22, 32, 0.62);
+    --glass-border: rgba(255, 255, 255, 0.09);
+
+    --msg-in: rgba(46, 125, 50, 0.22);
+    --msg-out: linear-gradient(135deg, rgba(124,77,255,0.32), rgba(64,196,255,0.2));
+    --msg-in-border: rgba(76, 175, 80, 0.25);
+    --msg-out-border: rgba(124, 77, 255, 0.4);
+
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.14);
     --shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(124, 77, 255, 0.15);
+    --shadow-glow: 0 0 0 1px rgba(124,77,255,0.25), 0 8px 32px rgba(124,77,255,0.35);
+    --shadow-card: 0 8px 28px rgba(0, 0, 0, 0.35);
 
-    --radius: 12px;
-    --radius-sm: 8px;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --radius-lg: 22px;
+    --radius-pill: 999px;
 
     --z-header: 100;
     --z-overlay: 200;
 
-    --color-error: #ff5252;
-    --color-success: #4caf50;
-    --color-warning: #ff9800;
+    --color-error: #ff6b6b;
+    --color-success: #51e08c;
+    --color-warning: #ffb74d;
 
-    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --font: 'Inter', 'Segoe UI', system-ui, -apple-system, 'SF Pro Display', sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+
+    --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+    --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+    --dur-fast: 160ms;
+    --dur-med: 280ms;
+    --dur-slow: 480ms;
 }
 
 * {
@@ -39,48 +69,129 @@
     padding: 0;
 }
 
+html {
+    scrollbar-color: rgba(124, 77, 255, 0.4) transparent;
+}
+
 body {
     background: var(--bg-primary);
+    background-image: var(--gradient-bg);
+    background-attachment: fixed;
     color: var(--text-primary);
     font-family: var(--font);
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.55;
+    letter-spacing: 0.01em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    min-height: 100vh;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(1px 1px at 12% 22%, rgba(255,255,255,0.25), transparent),
+        radial-gradient(1px 1px at 78% 12%, rgba(179,136,255,0.4), transparent),
+        radial-gradient(1px 1px at 55% 78%, rgba(64,196,255,0.25), transparent);
+    opacity: 0.5;
+    z-index: 0;
+}
+
+::selection {
+    background: rgba(124, 77, 255, 0.45);
+    color: #fff;
 }
 
 a {
-    color: var(--accent);
+    color: var(--accent-2);
     text-decoration: none;
-    transition: color 0.2s;
+    transition: color var(--dur-fast) var(--ease-smooth);
 }
 
 a:hover {
     color: var(--accent-hover);
 }
 
+:focus-visible {
+    outline: 2px solid var(--accent-2);
+    outline-offset: 2px;
+    border-radius: 6px;
+}
+
 ::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
+    height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: 3px;
+    background: linear-gradient(180deg, rgba(124,77,255,0.5), rgba(64,196,255,0.35));
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--text-muted);
+    background: linear-gradient(180deg, rgba(124,77,255,0.8), rgba(64,196,255,0.6));
+    background-clip: padding-box;
 }
 
 .icon-button, .icon-button:visited {
     color: var(--text-secondary);
-    transition: color 0.2s, transform 0.2s;
+    transition: color var(--dur-fast) var(--ease-smooth), transform var(--dur-fast) var(--ease-spring), background var(--dur-fast);
 }
 
 .icon-button:hover:not(:disabled), .icon-button:visited:hover:not(:disabled) {
-    color: var(--accent);
+    color: var(--accent-2);
+}
+
+/* ---------- global keyframes ---------- */
+@keyframes eva-fade-slide-up {
+    from { opacity: 0; transform: translateY(14px) scale(0.99); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes eva-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes eva-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+@keyframes eva-gradient-pan {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes eva-pulse-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(124, 77, 255, 0.45); }
+    50% { box-shadow: 0 0 0 10px rgba(124, 77, 255, 0); }
+}
+
+@keyframes eva-shimmer {
+    0% { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+}
+
+@keyframes eva-orb-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
 }

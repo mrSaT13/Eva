@@ -171,12 +171,15 @@ watch(hasActiveItems, (active) => {
 }
 
 .timer-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border, rgba(255,255,255,0.1));
-    border-radius: 12px;
-    padding: 12px 16px;
+    background: rgba(22, 22, 34, 0.8);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(124,77,255,0.3);
+    border-radius: 18px;
+    padding: 14px 16px;
     min-width: 180px;
     flex: 1;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+    animation: eva-fade-slide-up 0.3s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1));
 }
 
 .timer-header {
@@ -210,30 +213,36 @@ watch(hasActiveItems, (active) => {
 
 .timer-display {
     font-size: 32px;
-    font-weight: 700;
+    font-weight: 800;
     text-align: center;
     font-variant-numeric: tabular-nums;
-    color: var(--accent);
+    background: linear-gradient(135deg, #b388ff, #40c4ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
     letter-spacing: 1px;
 }
 
 .timer-display.finished {
+    -webkit-text-fill-color: var(--text-muted);
+    background: none;
     color: var(--text-muted);
 }
 
 .progress-bar {
-    height: 3px;
-    background: var(--bg-input, rgba(255,255,255,0.05));
-    border-radius: 2px;
+    height: 5px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 4px;
     margin-top: 8px;
     overflow: hidden;
 }
 
 .progress-fill {
     height: 100%;
-    background: var(--accent);
-    border-radius: 2px;
+    background: linear-gradient(90deg, #7c4dff, #40c4ff);
+    border-radius: 4px;
     transition: width 1s linear;
+    box-shadow: 0 0 10px rgba(124,77,255,0.6);
 }
 
 .finished-text {
