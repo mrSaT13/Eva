@@ -879,7 +879,7 @@ fetchHAServices();
                     <h3>Нет навыков</h3>
                     <p>Нажми "Создать навык" или возьми готовый шаблон</p>
                     <button class="primary-btn" @click="showTemplates = true">
-                        <StarIcon /> Открыть ��аблоны
+                        <StarIcon /> Открыть шаблоны
                     </button>
                 </div>
 

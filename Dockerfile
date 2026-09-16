@@ -34,6 +34,7 @@ COPY --chown=1001:1001 eva_plugin_llm ./eva_plugin_llm
 COPY --chown=1001:1001 eva_plugin_local_speech_face ./eva_plugin_local_speech_face
 COPY --chown=1001:1001 eva_plugin_ntp ./eva_plugin_ntp
 COPY --chown=1001:1001 eva_plugin_telegram_face ./eva_plugin_telegram_face
+COPY --chown=1001:1001 eva_plugin_discord_face ./eva_plugin_discord_face
 COPY --chown=1001:1001 eva_plugin_translate ./eva_plugin_translate
 COPY --chown=1001:1001 docker-config ./config
 

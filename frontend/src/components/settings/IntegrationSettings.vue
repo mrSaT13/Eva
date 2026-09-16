@@ -86,6 +86,25 @@ const newRssFeed = ref('');
 const weatherCity = ref('Moscow');
 const weatherSaved = ref(false);
 
+const mqttHost = ref('127.0.0.1');
+const mqttPort = ref(1883);
+const mqttUser = ref('');
+const mqttPass = ref('');
+const mqttEnabled = ref(false);
+const mqttStatus = ref<'idle' | 'testing' | 'ok' | 'error'>('idle');
+const mqttMessage = ref('');
+const mqttSaved = ref(false);
+
+const spotifyToken = ref('');
+const spotifySaved = ref(false);
+const spotifyStatus = ref<'idle' | 'testing' | 'ok' | 'error'>('idle');
+const spotifyMessage = ref('');
+
+const discordToken = ref('');
+const discordSaved = ref(false);
+
+const vendors = ref<any[]>([]);
+
 const loadHAConfig = async () => {
     try {
         const r = await fetch('/api/automations/ha_status');
@@ -191,6 +210,103 @@ const saveWeather = async () => {
 
 const isIntegrationActive = (id: string) => activeIntegrations.value.has(id);
 
+const VENDOR_IDS = ['yandex', 'google_home', 'ikea', 'philips', 'tuya', 'xiaomi', 'zigbee'];
+const isAnyVendorActive = () => VENDOR_IDS.some(id => activeIntegrations.value.has(id));
+
+const loadMqtt = async () => {
+    try {
+        const r = await fetch('/api/mqtt/status');
+        if (r.ok) {
+            const data = await r.json();
+            mqttEnabled.value = !!data.enabled;
+            if (data.host) mqttHost.value = data.host;
+            if (data.port) mqttPort.value = data.port;
+            if (data.connected) { mqttStatus.value = 'ok'; mqttMessage.value = 'Подключено'; }
+            else if (data.enabled) { mqttStatus.value = 'error'; mqttMessage.value = 'Нет подключения к брокеру'; }
+        }
+    } catch {}
+};
+
+const saveMqtt = async () => {
+    try {
+        const r = await fetch('/api/config/configs/mqtt', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enabled: mqttEnabled.value, host: mqttHost.value, port: Number(mqttPort.value), username: mqttUser.value, password: mqttPass.value }),
+        });
+        mqttSaved.value = r.ok;
+        setTimeout(() => mqttSaved.value = false, 2000);
+        await loadMqtt();
+    } catch {}
+};
+
+const testMqtt = async () => {
+    mqttStatus.value = 'testing';
+    try {
+        const r = await fetch('/api/mqtt/status');
+        if (r.ok) {
+            const data = await r.json();
+            mqttStatus.value = data.connected ? 'ok' : 'error';
+            mqttMessage.value = data.connected ? 'Подключено' : 'Нет подключения к брокеру';
+        } else { mqttStatus.value = 'error'; mqttMessage.value = 'Ошибка сети'; }
+    } catch { mqttStatus.value = 'error'; mqttMessage.value = 'Ошибка сети'; }
+};
+
+const saveSpotify = async () => {
+    try {
+        const r = await fetch('/api/config/configs/spotify', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enabled: true, access_token: spotifyToken.value }),
+        });
+        spotifySaved.value = r.ok;
+        setTimeout(() => spotifySaved.value = false, 2000);
+    } catch {}
+};
+
+const testSpotify = async () => {
+    spotifyStatus.value = 'testing';
+    try {
+        const r = await fetch('/api/spotify/status');
+        if (r.ok) {
+            const data = await r.json();
+            if (data.playing) { spotifyStatus.value = 'ok'; spotifyMessage.value = `Играет: ${data.artists || ''} — ${data.track || ''}`; }
+            else if (data.error) { spotifyStatus.value = 'error'; spotifyMessage.value = data.error; }
+            else { spotifyStatus.value = 'ok'; spotifyMessage.value = 'Подключено, ничего не играет'; }
+        } else { spotifyStatus.value = 'error'; spotifyMessage.value = 'Ошибка сети'; }
+    } catch { spotifyStatus.value = 'error'; spotifyMessage.value = 'Ошибка сети'; }
+};
+
+const saveDiscord = async () => {
+    try {
+        const r = await fetch('/api/config/configs/face_discord', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: discordToken.value }),
+        });
+        discordSaved.value = r.ok;
+        setTimeout(() => discordSaved.value = false, 2000);
+    } catch {}
+};
+
+const loadVendors = async () => {
+    try {
+        const r = await fetch('/api/smart_vendors/vendors');
+        if (r.ok) vendors.value = await r.json();
+    } catch {}
+};
+
+const toggleVendor = async (id: string, enabled: boolean) => {
+    try {
+        const r = await fetch(`/api/smart_vendors/vendors/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enabled }),
+        });
+        if (r.ok) await loadVendors();
+    } catch {}
+};
+
 const isIntegrationConfigured = (id: string) => {
     switch (id) {
         case 'ha': return !!(haUrl.value && haToken.value);
@@ -198,6 +314,9 @@ const isIntegrationConfigured = (id: string) => {
         case 'navidrome': return !!navidromeUrl.value;
         case 'weather': return !!weatherCity.value;
         case 'rss': return rssFeeds.value.length > 0;
+        case 'mqtt': return !!mqttHost.value;
+        case 'spotify': return !!spotifyToken.value;
+        case 'discord': return !!discordToken.value;
         default: return false;
     }
 };
@@ -233,6 +352,23 @@ const loadAllConfigs = async () => {
                 if (item.scope === 'face_telegram' && cfg.token) {
                     activeIntegrations.value.add('telegram');
                 }
+                if (item.scope === 'mqtt' && cfg.host) {
+                    activeIntegrations.value.add('mqtt');
+                    mqttHost.value = cfg.host;
+                    if (cfg.port) mqttPort.value = cfg.port;
+                    mqttEnabled.value = cfg.enabled !== false;
+                }
+                if (item.scope === 'spotify' && cfg.access_token) {
+                    activeIntegrations.value.add('spotify');
+                }
+                if (item.scope === 'face_discord' && cfg.token) {
+                    activeIntegrations.value.add('discord');
+                }
+                if (item.scope === 'smart_vendors' && cfg.enabled) {
+                    for (const [vid, on] of Object.entries(cfg.enabled)) {
+                        if (on) activeIntegrations.value.add(vid);
+                    }
+                }
             }
         }
     } catch {}
@@ -242,6 +378,8 @@ onMounted(() => {
     loadAllConfigs();
     loadHAConfig();
     loadRSSFeeds();
+    loadMqtt();
+    loadVendors();
 });
 </script>
 
@@ -425,6 +563,132 @@ onMounted(() => {
                 <button class="remove-int-btn" @click="removeIntegration('telegram')" title="Удалить">×</button>
             </div>
             <div class="hint"><p>Настройте токен в config/face_telegram.yaml</p></div>
+        </div>
+
+        <div v-if="isIntegrationActive('discord')" class="section-card">
+            <div class="section-header">
+                <div class="icon-box"><ChatIcon /></div>
+                <div class="header-text"><h3>Discord</h3><p>Discord бот</p></div>
+                <span class="status-badge" :class="isIntegrationConfigured('discord') ? 'configured' : 'not-configured'">
+                    {{ isIntegrationConfigured('discord') ? 'Настроена' : 'Не настроена' }}
+                </span>
+                <button class="remove-int-btn" @click="removeIntegration('discord')" title="Удалить">×</button>
+            </div>
+            <div class="fields">
+                <div class="field">
+                    <label>Токен бота</label>
+                    <input v-model="discordToken" type="password" class="input" placeholder="Discord Bot Token" />
+                </div>
+            </div>
+            <div class="field-actions">
+                <button class="save-btn" @click="saveDiscord">
+                    <CheckIcon v-if="discordSaved" /><SaveIcon v-else />
+                    {{ discordSaved ? 'Сохранено' : 'Сохранить' }}
+                </button>
+            </div>
+            <div class="hint">
+                <p>Developer Portal -&gt; Bot -&gt; Token. Включите MESSAGE CONTENT intent. Требуется перезапуск.</p>
+            </div>
+        </div>
+
+        <div v-if="isIntegrationActive('mqtt')" class="section-card">
+            <div class="section-header">
+                <div class="icon-box"><PlugIcon /></div>
+                <div class="header-text"><h3>MQTT</h3><p>Брокер сообщений IoT</p></div>
+                <span class="status-badge" :class="mqttStatus === 'ok' ? 'configured' : 'not-configured'">
+                    {{ mqttStatus === 'ok' ? 'Подключено' : 'Не подключено' }}
+                </span>
+                <button class="remove-int-btn" @click="removeIntegration('mqtt')" title="Удалить">×</button>
+            </div>
+            <div class="fields">
+                <div class="field">
+                    <label><input type="checkbox" v-model="mqttEnabled" /> Включено</label>
+                </div>
+                <div class="field">
+                    <label>Хост брокера</label>
+                    <input v-model="mqttHost" type="text" class="input" placeholder="127.0.0.1" />
+                </div>
+                <div class="field">
+                    <label>Порт</label>
+                    <input v-model.number="mqttPort" type="number" class="input" placeholder="1883" />
+                </div>
+                <div class="field">
+                    <label>Пользователь</label>
+                    <input v-model="mqttUser" type="text" class="input" placeholder="(необязательно)" />
+                </div>
+                <div class="field">
+                    <label>Пароль</label>
+                    <input v-model="mqttPass" type="password" class="input" placeholder="(необязательно)" />
+                </div>
+            </div>
+            <div class="field-actions">
+                <button class="test-btn" @click="testMqtt" :disabled="mqttStatus === 'testing'">
+                    <LoadingIcon v-if="mqttStatus === 'testing'" class="spin" />
+                    Проверить
+                </button>
+                <button class="save-btn" @click="saveMqtt">
+                    <CheckIcon v-if="mqttSaved" /><SaveIcon v-else />
+                    {{ mqttSaved ? 'Сохранено' : 'Сохранить' }}
+                </button>
+            </div>
+            <div v-if="mqttStatus !== 'idle'" class="status-bar" :class="mqttStatus">
+                <component :is="mqttStatus === 'ok' ? CheckIcon : ErrorIcon" />
+                {{ mqttMessage }}
+            </div>
+            <div class="hint">
+                <p>Голосовая команда: "мктт отправь топик сообщение". Zigbee2MQTT: топики zigbee2mqtt/+/set.</p>
+            </div>
+        </div>
+
+        <div v-if="isIntegrationActive('spotify')" class="section-card">
+            <div class="section-header">
+                <div class="icon-box"><MusicIcon /></div>
+                <div class="header-text"><h3>Spotify</h3><p>Музыкальный стриминг</p></div>
+                <span class="status-badge" :class="isIntegrationConfigured('spotify') ? 'configured' : 'not-configured'">
+                    {{ isIntegrationConfigured('spotify') ? 'Настроена' : 'Не настроена' }}
+                </span>
+                <button class="remove-int-btn" @click="removeIntegration('spotify')" title="Удалить">×</button>
+            </div>
+            <div class="fields">
+                <div class="field">
+                    <label>OAuth access_token</label>
+                    <input v-model="spotifyToken" type="password" class="input" placeholder="BQD..." />
+                </div>
+            </div>
+            <div class="field-actions">
+                <button class="test-btn" @click="testSpotify" :disabled="spotifyStatus === 'testing'">
+                    <LoadingIcon v-if="spotifyStatus === 'testing'" class="spin" />
+                    Проверить
+                </button>
+                <button class="save-btn" @click="saveSpotify">
+                    <CheckIcon v-if="spotifySaved" /><SaveIcon v-else />
+                    {{ spotifySaved ? 'Сохранено' : 'Сохранить' }}
+                </button>
+            </div>
+            <div v-if="spotifyStatus !== 'idle'" class="status-bar" :class="spotifyStatus">
+                <component :is="spotifyStatus === 'ok' ? CheckIcon : ErrorIcon" />
+                {{ spotifyMessage }}
+            </div>
+            <div class="hint">
+                <p>Токен: developer.spotify.com/dashboard. Голос: "спотифай играй / пауза / дальше".</p>
+            </div>
+        </div>
+
+        <div v-if="isAnyVendorActive()" class="section-card">
+            <div class="section-header">
+                <div class="icon-box"><HomeIcon /></div>
+                <div class="header-text"><h3>Вендоры умного дома</h3><p>Через Home Assistant / MQTT</p></div>
+            </div>
+            <div class="fields">
+                <div v-for="v in vendors" :key="v.id" class="feed-item">
+                    <span class="feed-url"><b>{{ v.name }}</b> — {{ v.state === 'ok' ? 'работает' : v.state === 'misconfigured' ? 'включён, нет связи' : 'выключен' }}<br /><small>{{ v.hint }}</small></span>
+                    <button class="remove-btn" v-if="!v.enabled" @click="toggleVendor(v.id, true)">Включить</button>
+                    <button class="remove-btn" v-else @click="toggleVendor(v.id, false)">Выключить</button>
+                </div>
+            </div>
+            <div class="hint">
+                <p>Управление устройствами идёт через Home Assistant — настройте его интеграцию вендора там.</p>
+            </div>
         </div>
 
         <div v-if="activeIntegrations.size === 0" class="empty-state">

@@ -13,19 +13,24 @@ from eva.plugin_loader.magic_plugin import MagicPlugin
 _logger = getLogger('ha_images')
 
 
+def _base_dir() -> str:
+    # Уважаем EVA_HOME, иначе кэш и конфиги расползаются по ~/eva
+    return os.environ.get('EVA_HOME', os.path.expanduser('~/eva'))
+
+
 class HAImagesPlugin(MagicPlugin):
     name = 'ha_images'
-    version = '1.0.0'
+    version = '1.1.0'
 
     config: dict[str, Any] = {
         "ha_url": "",
         "ha_token": "",
-        "cache_dir": os.path.expanduser("~/eva/image_cache"),
+        "cache_subdir": "image_cache",
         "cache_ttl": 300,
     }
 
     def _get_cache_path(self, entity_id: str) -> str:
-        cache_dir = self.config['cache_dir']
+        cache_dir = os.path.join(_base_dir(), self.config.get('cache_subdir', 'image_cache'))
         os.makedirs(cache_dir, exist_ok=True)
         safe_name = entity_id.replace('.', '_').replace('/', '_')
         return os.path.join(cache_dir, f"{safe_name}_{int(time.time())}.jpg")
@@ -43,10 +48,14 @@ class HAImagesPlugin(MagicPlugin):
             token = plugin.config.get('ha_token', '')
             if url and token:
                 return url, token
-            # Fallback: ищем в automations
+            # Fallback: ищем в конфиге automations внутри EVA_HOME
             try:
                 import yaml
-                config_dir = os.path.expanduser('~/eva/config')
+                from eva.plugin_loader.file_patterns import first_substitution
+                try:
+                    config_dir = first_substitution('{eva_home}/config')
+                except Exception:
+                    config_dir = os.path.join(_base_dir(), 'config')
                 fpath = os.path.join(config_dir, 'automations.yaml')
                 if os.path.exists(fpath):
                     with open(fpath, 'r', encoding='utf-8') as f:

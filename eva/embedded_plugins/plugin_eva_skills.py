@@ -133,7 +133,7 @@ class EvaSkillsPlugin(MagicPlugin):
     # ------------------------------------------------------------------
 
     def _get_skills_path(self) -> str:
-        home = os.path.expanduser('~/eva')
+        home = os.environ.get('EVA_HOME', os.path.expanduser('~/eva'))
         return os.path.join(home, 'skills.json')
 
     def _load_skills(self):
@@ -420,7 +420,7 @@ class EvaSkillsPlugin(MagicPlugin):
         return best[1], best[2], best[3]
 
     # ------------------------------------------------------------------
-    # Исполнение дейст��ий
+    # Исполнение действий
     # ------------------------------------------------------------------
 
     async def _http_action(self, action: dict, slots: dict[str, str]) -> str:
@@ -516,10 +516,15 @@ class EvaSkillsPlugin(MagicPlugin):
                         return url, token
             except Exception:
                 pass
-        # Fallback: читаем напрямую из YAML
+        # Fallback: читаем напрямую из YAML внутри EVA_HOME
         try:
             import yaml
-            config_dir = os.path.expanduser('~/eva/config')
+            from eva.plugin_loader.file_patterns import first_substitution
+            try:
+                config_dir = first_substitution('{eva_home}/config')
+            except Exception:
+                config_dir = os.path.join(
+                    os.environ.get('EVA_HOME', os.path.expanduser('~/eva')), 'config')
             for fname in ('automations.yaml', 'voice_commands.yaml', 'integrations.yaml'):
                 fpath = os.path.join(config_dir, fname)
                 if os.path.exists(fpath):
@@ -540,7 +545,7 @@ class EvaSkillsPlugin(MagicPlugin):
         seconds_expr = self.resolve_template(seconds_expr, slots)
         message = self.resolve_template(action.get('message', 'Таймер сработал!'), slots)
 
-        # Вычислим длительность: поддержка ��ростых выражений "X * 60"
+        # Вычислим длительность: поддержка простых выражений "X * 60"
         try:
             if '*' in seconds_expr or '+' in seconds_expr or '-' in seconds_expr:
                 # Безопасный eval — только математика
@@ -692,7 +697,7 @@ class EvaSkillsPlugin(MagicPlugin):
         if pm is None:
             return ''
 
-        # По��ск LLM-плагина
+        # Поиск LLM-плагина
         llm_plugin = None
         if hasattr(pm, 'get_plugin_by_name'):
             for name in ('plugin_llm_fallback_context', 'plugin_llm_lmstudio',

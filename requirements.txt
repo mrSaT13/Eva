@@ -29,6 +29,11 @@ httpx~=0.28.1
 
 # --- Мессенджеры ---
 pyTelegramBotAPI~=4.7.1
+discord.py>=2.3
+
+# --- IoT / медиа ---
+paho-mqtt>=1.6
+spotipy>=2.24
 
 # --- Веб-сервер ---
 uvicorn[standard]>=0.30.0
