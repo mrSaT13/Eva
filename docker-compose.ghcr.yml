@@ -1,0 +1,25 @@
+# Eva — запуск из готового образа GHCR (собирать ничего не нужно).
+# Использование:
+#   cp .env.example .env   # при необходимости поправьте значения
+#   docker compose -f docker-compose.ghcr.yml up -d
+# Образ собирается GitHub Actions на каждый пуш в main:
+#   https://github.com/mrSaT13/Eva/pkgs/container/eva
+services:
+  eva:
+    image: ghcr.io/mrsat13/eva:latest
+    container_name: eva
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    volumes:
+      - eva-data:/eva/data
+    env_file:
+      - .env
+    environment:
+      - EVA_HOME=/eva/data
+    # Раскомментируйте при нужде (приоритет выше .env):
+    # - OPENAI_API_KEY=sk-...
+    # - LM_STUDIO_URL=http://host.docker.internal:1234/v1
+
+volumes:
+  eva-data:
