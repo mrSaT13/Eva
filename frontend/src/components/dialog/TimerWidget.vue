@@ -171,15 +171,12 @@ watch(hasActiveItems, (active) => {
 }
 
 .timer-card {
-    background: rgba(22, 22, 34, 0.8);
-    backdrop-filter: blur(14px);
+    background: rgba(22, 22, 34, 0.85);
     border: 1px solid rgba(124,77,255,0.3);
     border-radius: 18px;
     padding: 14px 16px;
     min-width: 180px;
     flex: 1;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.3);
-    animation: eva-fade-slide-up 0.3s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1));
 }
 
 .timer-header {
@@ -216,16 +213,11 @@ watch(hasActiveItems, (active) => {
     font-weight: 800;
     text-align: center;
     font-variant-numeric: tabular-nums;
-    background: linear-gradient(135deg, #b388ff, #40c4ff);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #c9b8ff;
     letter-spacing: 1px;
 }
 
 .timer-display.finished {
-    -webkit-text-fill-color: var(--text-muted);
-    background: none;
     color: var(--text-muted);
 }
 
@@ -239,10 +231,9 @@ watch(hasActiveItems, (active) => {
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #7c4dff, #40c4ff);
+    background: linear-gradient(90deg, #7c4dff, #5b8cff);
     border-radius: 4px;
     transition: width 1s linear;
-    box-shadow: 0 0 10px rgba(124,77,255,0.6);
 }
 
 .finished-text {

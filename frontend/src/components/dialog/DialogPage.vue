@@ -126,9 +126,16 @@ const sendCommand = () => {
     flex-direction: column;
     min-height: calc(100vh - var(--header-h, 64px) - var(--nav-h, 68px));
     position: relative;
-    max-width: 760px;
+    /* Чат — узкая центрированная колонка на ПК, на мобиле — во всю ширину */
+    max-width: 720px;
     margin: 0 auto;
     width: 100%;
+}
+
+@media (min-width: 1400px) {
+    .dialog-page {
+        max-width: 780px;
+    }
 }
 
 .sticky-top {
@@ -157,13 +164,12 @@ const sendCommand = () => {
     color: var(--text-secondary);
     gap: 8px;
     min-height: 52vh;
-    animation: eva-fade-slide-up 0.5s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1));
 }
 
 .empty-orb {
     position: relative;
-    width: 120px;
-    height: 120px;
+    width: 112px;
+    height: 112px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -171,30 +177,25 @@ const sendCommand = () => {
 }
 
 .orb-core {
-    width: 76px;
-    height: 76px;
-    border-radius: 26px;
-    background: linear-gradient(135deg, #7c4dff 0%, #b388ff 50%, #40c4ff 100%);
-    background-size: 200% 200%;
-    animation: eva-gradient-pan 6s ease infinite, eva-float 4s ease-in-out infinite;
+    width: 72px;
+    height: 72px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #7c4dff 0%, #8f7bff 55%, #5b8cff 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 34px;
+    font-size: 32px;
     font-weight: 800;
     color: #fff;
-    box-shadow: 0 12px 44px rgba(124, 77, 255, 0.5), inset 0 1px 0 rgba(255,255,255,0.35);
+    box-shadow: 0 8px 28px rgba(124, 77, 255, 0.35), inset 0 1px 0 rgba(255,255,255,0.3);
 }
 
 .orb-ring {
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    background: conic-gradient(from 0deg, rgba(124,77,255,0.5), rgba(64,196,255,0.35), transparent 65%, rgba(124,77,255,0.5));
-    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
-    mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
-    animation: eva-orb-spin 9s linear infinite;
-    opacity: 0.9;
+    border: 1px solid rgba(124, 77, 255, 0.3);
+    opacity: 0.8;
 }
 
 .empty-state h3 {
@@ -224,16 +225,12 @@ const sendCommand = () => {
     background: var(--bg-input);
     border: 1px solid var(--border);
     color: var(--text-secondary);
-    backdrop-filter: blur(12px);
-    transition: all 0.25s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1));
     cursor: default;
 }
 
 .chip:hover {
     border-color: rgba(124,77,255,0.5);
     color: var(--text-primary);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(124,77,255,0.25);
 }
 
 .cameras-panel {
@@ -243,7 +240,7 @@ const sendCommand = () => {
     right: 0;
     max-width: 600px;
     margin: 0 auto;
-    background: rgba(22, 22, 32, 0.85);
+    background: rgba(22, 22, 32, 0.92);
     backdrop-filter: blur(20px) saturate(170%);
     -webkit-backdrop-filter: blur(20px) saturate(170%);
     border: 1px solid var(--border);
@@ -252,7 +249,6 @@ const sendCommand = () => {
     z-index: 50;
     max-height: 240px;
     overflow-y: auto;
-    animation: eva-fade-slide-up 0.3s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1));
 }
 
 .cameras-header {
@@ -299,39 +295,38 @@ const sendCommand = () => {
     font-size: 13px;
     cursor: pointer;
     text-align: left;
-    transition: all 0.22s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1));
+    transition: background-color 0.2s, border-color 0.2s;
 }
 
 .camera-btn:hover {
     background: var(--bg-hover);
     border-color: rgba(124,77,255,0.35);
-    transform: translateX(3px);
 }
 
 /*
-  Floating glass input-pill, sticky внизу
+  Поле ввода — в обычном потоке внизу страницы (не sticky/fixed),
+  поэтому нижняя навигация его никогда не перекрывает.
+  Отступ снизу даёт .main-content (nav-h + запас).
 */
 .input-bar {
     display: flex;
     gap: 8px;
     align-items: center;
     padding: 10px;
-    margin-top: auto;
-    position: sticky;
-    bottom: 8px;
-    z-index: 20;
-    background: rgba(20, 20, 30, 0.78);
+    margin-top: 16px;
+    margin-bottom: 8px;
+    background: rgba(20, 20, 30, 0.85);
     backdrop-filter: blur(20px) saturate(170%);
     -webkit-backdrop-filter: blur(20px) saturate(170%);
     border: 1px solid var(--border);
     border-radius: var(--radius-pill, 999px);
-    box-shadow: var(--shadow-lg, 0 12px 40px rgba(0,0,0,0.45));
-    transition: border-color 0.25s, box-shadow 0.25s;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .input-bar:focus-within {
     border-color: rgba(124,77,255,0.55);
-    box-shadow: 0 0 0 1px rgba(124,77,255,0.3), 0 12px 44px rgba(124,77,255,0.3);
+    box-shadow: 0 0 0 1px rgba(124,77,255,0.25), 0 8px 28px rgba(124,77,255,0.22);
 }
 
 .icon-btn {
@@ -346,17 +341,14 @@ const sendCommand = () => {
     color: var(--text-secondary);
     cursor: pointer;
     flex-shrink: 0;
-    transition: all 0.25s var(--ease-spring, cubic-bezier(0.34,1.4,0.64,1));
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
 
 .icon-btn:hover {
     background: var(--bg-hover);
     color: var(--text-primary);
-    transform: translateY(-1px) scale(1.04);
     border-color: rgba(124,77,255,0.4);
 }
-
-.icon-btn:active { transform: scale(0.94); }
 
 .command-input {
     flex: 1 1 auto;
@@ -378,45 +370,31 @@ const sendCommand = () => {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #7c4dff 0%, #9e7bff 50%, #40c4ff 130%);
-    background-size: 180% 180%;
+    background: linear-gradient(135deg, #7c4dff 0%, #5b8cff 100%);
     color: white;
     border: none;
     cursor: pointer;
     flex-shrink: 0;
-    box-shadow: 0 4px 20px rgba(124, 77, 255, 0.5), inset 0 1px 0 rgba(255,255,255,0.3);
-    transition: all 0.25s var(--ease-spring, cubic-bezier(0.34,1.4,0.64,1));
+    box-shadow: 0 4px 16px rgba(124, 77, 255, 0.4), inset 0 1px 0 rgba(255,255,255,0.25);
+    transition: filter 0.2s, box-shadow 0.2s;
 }
 
 .send-btn:hover:not(:disabled) {
-    filter: brightness(1.1);
-    transform: scale(1.06) translateY(-1px);
-    box-shadow: 0 8px 28px rgba(124, 77, 255, 0.6);
-    animation: eva-gradient-pan 2s ease infinite;
+    filter: brightness(1.08);
+    box-shadow: 0 6px 20px rgba(124, 77, 255, 0.5);
 }
-.send-btn:disabled { opacity: 0.35; cursor: not-allowed; filter: grayscale(0.4); }
-.send-btn:active:not(:disabled) { transform: scale(0.93); }
+.send-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
-.thinking-bubble { animation: eva-fade-slide-up 0.25s ease-out; }
+.thinking-bubble { animation: none; }
 .thinking {
-    display: flex; gap: 5px; align-items: center; padding: 16px 20px !important;
+    display: flex; gap: 6px; align-items: center; padding: 16px 20px !important;
     background: var(--bg-card) !important;
     border: 1px solid var(--border);
-    position: relative;
-    overflow: hidden;
-}
-.thinking::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(124,77,255,0.14), transparent);
-    background-size: 400px 100%;
-    animation: eva-shimmer 1.6s linear infinite;
 }
 .dot {
     width: 8px; height: 8px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent, #7c4dff), var(--accent-3, #40c4ff));
-    animation: bounce 1.4s infinite ease-in-out;
+    background: var(--text-muted);
+    opacity: 0.7;
 }
 .dot:nth-child(1) { animation-delay: 0s; }
 .dot:nth-child(2) { animation-delay: 0.2s; }

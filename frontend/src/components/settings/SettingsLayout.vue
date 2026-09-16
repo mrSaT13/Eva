@@ -66,22 +66,21 @@ const sections = [
 <style scoped>
 .settings-layout {
     display: flex;
-    height: 100%;
-    min-height: 0;
+    gap: 20px;
+    align-items: flex-start;
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 16px 0 32px;
 }
 
 .settings-sidebar {
-    width: 216px;
+    width: 230px;
     background: rgba(20, 20, 30, 0.6);
-    backdrop-filter: blur(16px);
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg, 22px);
-    padding: 16px 10px;
+    border-radius: 18px;
+    padding: 14px 10px;
     flex-shrink: 0;
-    align-self: flex-start;
-    position: sticky;
-    top: 12px;
-    box-shadow: var(--shadow-card, 0 8px 28px rgba(0,0,0,0.35));
 }
 
 .settings-sidebar h2 {
@@ -112,21 +111,20 @@ const sections = [
     color: var(--text-secondary);
     font-size: 14px;
     cursor: pointer;
-    transition: all 0.22s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1));
+    transition: background-color 0.2s, color 0.2s;
     text-align: left;
+    width: 100%;
 }
 
 .nav-btn:hover {
     background: var(--bg-hover);
     color: var(--text-primary);
-    transform: translateX(2px);
 }
 
 .nav-btn.active {
-    background: linear-gradient(135deg, rgba(124,77,255,0.28), rgba(64,196,255,0.14));
+    background: rgba(124, 77, 255, 0.18);
     color: #fff;
-    border-color: rgba(124,77,255,0.4);
-    box-shadow: 0 4px 18px rgba(124,77,255,0.25);
+    border-color: rgba(124,77,255,0.35);
 }
 
 .nav-btn span {
@@ -135,21 +133,17 @@ const sections = [
 
 .settings-content {
     flex: 1;
-    /* Скроллит родитель .main-content, чтобы не было двойного скролла */
     min-width: 0;
-    padding: 4px 4px 32px 20px;
-    animation: eva-fade-in 0.3s ease;
+    padding: 0 0 32px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     .settings-layout {
         flex-direction: column;
-        gap: 12px;
     }
 
     .settings-sidebar {
         width: 100%;
-        position: static;
         padding: 10px;
     }
 

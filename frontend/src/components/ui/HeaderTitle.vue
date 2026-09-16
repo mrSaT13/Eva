@@ -23,12 +23,10 @@ const props = defineProps<{
 }
 
 .header-dot {
-    width: 9px;
-    height: 9px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background: linear-gradient(135deg, #7c4dff, #40c4ff);
-    box-shadow: 0 0 12px rgba(124, 77, 255, 0.9);
-    animation: eva-pulse-glow 2.4s ease-in-out infinite;
     -webkit-text-fill-color: initial;
     flex-shrink: 0;
 }

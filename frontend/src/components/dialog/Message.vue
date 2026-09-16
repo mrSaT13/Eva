@@ -103,7 +103,6 @@ onUnmounted(() => {
     display: flex;
     flex-direction: column;
     max-width: 82%;
-    animation: eva-fade-slide-up 0.32s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1));
 }
 
 .message-in { align-self: flex-start; }
@@ -121,22 +120,16 @@ onUnmounted(() => {
 .message-bubble {
     padding: 13px 17px; border-radius: 20px;
     font-size: 14px; line-height: 1.6; word-break: break-word;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    transition: transform 0.22s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1)), box-shadow 0.22s;
 }
-.message-bubble:hover { transform: translateY(-1px); }
 .message-in .message-bubble {
     background: rgba(255,255,255,0.06);
     border: 1px solid var(--border);
     border-bottom-left-radius: 6px;
-    box-shadow: 0 4px 18px rgba(0,0,0,0.25);
 }
 .message-out .message-bubble {
-    background: linear-gradient(135deg, rgba(124,77,255,0.38), rgba(64,196,255,0.22));
-    border: 1px solid rgba(124, 77, 255, 0.4);
+    background: linear-gradient(135deg, rgba(124,77,255,0.3), rgba(91,140,255,0.2));
+    border: 1px solid rgba(124, 77, 255, 0.35);
     border-bottom-right-radius: 6px;
-    box-shadow: 0 4px 22px rgba(124,77,255,0.22);
 }
 .message-system .message-bubble {
     background: var(--accent-soft, rgba(124,77,255,0.1));
@@ -153,11 +146,9 @@ onUnmounted(() => {
 .message-out .message-time { text-align: right; }
 
 .timer-widget {
-    background: rgba(22, 22, 34, 0.8);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(124,77,255,0.4);
+    background: rgba(22, 22, 34, 0.85);
+    border: 1px solid rgba(124,77,255,0.35);
     border-radius: 20px; padding: 18px; min-width: 210px;
-    box-shadow: 0 8px 32px rgba(124,77,255,0.22);
     position: relative;
     overflow: hidden;
 }
@@ -172,23 +163,19 @@ onUnmounted(() => {
 .timer-icon { font-size: 20px; color: var(--accent); }
 .timer-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
 .timer-display {
-    font-size: 48px; font-weight: 800; text-align: center;
+    font-size: 44px; font-weight: 800; text-align: center;
     font-variant-numeric: tabular-nums;
-    background: linear-gradient(135deg, #b388ff, #40c4ff);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #c9b8ff;
     letter-spacing: 2px;
 }
-.timer-display.finished { -webkit-text-fill-color: var(--text-muted); background: none; color: var(--text-muted); }
+.timer-display.finished { color: var(--text-muted); }
 .timer-progress {
     height: 6px; background: rgba(255,255,255,0.08); border-radius: 4px;
     margin-top: 12px; overflow: hidden;
 }
 .timer-progress-bar {
-    height: 100%; background: linear-gradient(90deg, #7c4dff, #40c4ff); border-radius: 4px;
+    height: 100%; background: linear-gradient(90deg, #7c4dff, #5b8cff); border-radius: 4px;
     transition: width 1s linear;
-    box-shadow: 0 0 12px rgba(124,77,255,0.6);
 }
 .timer-finished {
     text-align: center; margin-top: 8px;
@@ -196,7 +183,7 @@ onUnmounted(() => {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px) scale(0.99); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 </style>

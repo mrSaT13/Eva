@@ -115,17 +115,14 @@ watch(settings, () => applySettings(), { deep: true });
     margin-bottom: 16px;
     background: rgba(24,24,36,0.65);
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg, 22px);
+    border-radius: 18px;
     padding: 18px;
-    backdrop-filter: blur(14px);
-    box-shadow: 0 4px 18px rgba(0,0,0,0.25);
 }
 .section h3 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 14px; color: var(--accent-2, #b388ff); }
 
 .color-grid { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-.color-btn { width: 38px; height: 38px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; transition: transform 0.25s var(--ease-spring, cubic-bezier(0.34,1.4,0.64,1)), border-color 0.2s, box-shadow 0.2s; box-shadow: 0 4px 14px rgba(0,0,0,0.3); }
-.color-btn:hover { transform: scale(1.14) translateY(-1px); }
-.color-btn.active { border-color: #fff; transform: scale(1.16); box-shadow: 0 0 0 3px rgba(124,77,255,0.4), 0 6px 20px rgba(124,77,255,0.4); }
+.color-btn { width: 38px; height: 38px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; transition: border-color 0.2s; }
+.color-btn.active { border-color: #fff; }
 .color-btn.bg { border: 2px solid var(--border); }
 .color-input { width: 36px; height: 36px; border: none; border-radius: 50%; cursor: pointer; padding: 0; }
 
@@ -141,14 +138,11 @@ watch(settings, () => applySettings(), { deep: true });
 .save-btn {
     display: flex; align-items: center; justify-content: center; gap: 8px;
     padding: 13px 22px; border-radius: var(--radius-pill, 999px);
-    background: linear-gradient(135deg, #7c4dff, #40c4ff);
-    background-size: 180% 180%;
+    background: linear-gradient(135deg, #7c4dff, #5b8cff);
     color: white; border: none;
     font-size: 14px; font-weight: 600; cursor: pointer;
-    transition: all 0.25s var(--ease-spring, cubic-bezier(0.34,1.4,0.64,1));
-    box-shadow: 0 6px 24px rgba(124,77,255,0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+    transition: filter 0.2s;
     width: 100%;
 }
-.save-btn:hover { filter: brightness(1.08); transform: translateY(-2px); box-shadow: 0 10px 32px rgba(124,77,255,0.5); }
-.save-btn:active { transform: translateY(0) scale(0.98); }
+.save-btn:hover { filter: brightness(1.08); }
 </style>

@@ -119,18 +119,14 @@ const editingConfig = computed(() => sm.state.value.context.configs?.[sm.state.v
     gap: 14px;
     padding: 16px 18px;
     background: rgba(24, 24, 36, 0.7);
-    backdrop-filter: blur(14px);
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg, 22px);
-    transition: all 0.25s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1));
-    box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+    border-radius: 18px;
+    transition: background-color 0.2s, border-color 0.2s;
 }
 
 .config-card:hover {
     background: rgba(30, 30, 44, 0.85);
-    border-color: rgba(124,77,255,0.4);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 32px rgba(0,0,0,0.35), 0 4px 18px rgba(124,77,255,0.2);
+    border-color: rgba(124,77,255,0.35);
 }
 
 .config-icon {
@@ -140,12 +136,11 @@ const editingConfig = computed(() => sm.state.value.context.configs?.[sm.state.v
     width: 44px;
     height: 44px;
     border-radius: 14px;
-    background: linear-gradient(135deg, rgba(124,77,255,0.35), rgba(64,196,255,0.22));
-    border: 1px solid rgba(124,77,255,0.35);
+    background: rgba(124, 77, 255, 0.16);
+    border: 1px solid rgba(124,77,255,0.3);
     color: #d3c2ff;
     font-size: 20px;
     flex-shrink: 0;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
 }
 
 .config-info {
@@ -176,19 +171,14 @@ const editingConfig = computed(() => sm.state.value.context.configs?.[sm.state.v
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.25s var(--ease-spring, cubic-bezier(0.34,1.4,0.64,1));
+    transition: background-color 0.2s, color 0.2s;
     white-space: nowrap;
 }
 
 .config-btn:hover {
-    background: linear-gradient(135deg, #7c4dff, #40c4ff);
-    border-color: transparent;
+    background: rgba(124,77,255,0.32);
     color: white;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(124,77,255,0.45);
 }
-
-.config-btn:active { transform: scale(0.96); }
 
 .configs-hint {
     text-align: center;

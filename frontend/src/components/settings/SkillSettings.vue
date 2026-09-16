@@ -1589,7 +1589,7 @@ fetchHAServices();
 .skill-settings h2 { font-size: 22px; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
 .subtitle { color: var(--text-secondary); font-size: 13px; }
 .header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
-.header-actions { display: flex; gap: 8px; }
+.header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
 .alice-badge {
     font-size: 10px; padding: 2px 8px; background: var(--accent);
@@ -1613,9 +1613,10 @@ fetchHAServices();
     display: flex; align-items: center; gap: 6px;
     padding: 10px 16px; border-radius: var(--radius-sm);
     background: var(--accent); color: white; border: none;
-    font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.2s, transform 0.2s;
+    font-size: 13px; font-weight: 500; cursor: pointer; transition: background 0.2s;
+    white-space: nowrap; flex-shrink: 0;
 }
-.primary-btn:hover:not(:disabled) { background: var(--accent-hover); transform: translateY(-1px); }
+.primary-btn:hover:not(:disabled) { background: var(--accent-hover); }
 .primary-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .primary-btn.sm { padding: 6px 12px; font-size: 12px; }
 

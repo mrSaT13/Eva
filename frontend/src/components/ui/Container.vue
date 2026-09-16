@@ -12,7 +12,12 @@
     margin: 0 auto;
     min-height: 100%;
     position: relative;
-    animation: eva-fade-slide-up 0.35s cubic-bezier(0.22,1,0.36,1);
+}
+
+@media (min-width: 1400px) {
+    .container {
+        width: 800px;
+    }
 }
 
 @media (max-width: 640px) {

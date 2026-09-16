@@ -85,20 +85,17 @@ import TelegramIcon from '~icons/simple-icons/telegram';
 }
 
 .logo {
-    width: 88px;
-    height: 88px;
-    border-radius: 28px;
-    background: linear-gradient(135deg, #7c4dff 0%, #b388ff 50%, #40c4ff 100%);
-    background-size: 200% 200%;
+    width: 84px;
+    height: 84px;
+    border-radius: 26px;
+    background: linear-gradient(135deg, #7c4dff 0%, #8f7bff 55%, #5b8cff 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 38px;
+    font-size: 36px;
     font-weight: 800;
     color: white;
     margin: 0 auto 16px;
-    box-shadow: 0 14px 48px rgba(124, 77, 255, 0.5), inset 0 1px 0 rgba(255,255,255,0.4);
-    animation: eva-gradient-pan 6s ease infinite, eva-float 5s ease-in-out infinite;
 }
 
 .about-header h1 {
@@ -114,12 +111,9 @@ import TelegramIcon from '~icons/simple-icons/telegram';
 
 .about-section {
     background: rgba(24, 24, 36, 0.68);
-    backdrop-filter: blur(14px);
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg, 22px);
+    border-radius: 18px;
     padding: 20px;
-    box-shadow: 0 4px 18px rgba(0,0,0,0.25);
-    animation: eva-fade-slide-up 0.4s var(--ease-smooth, cubic-bezier(0.22,1,0.36,1));
 }
 
 .about-section h2 {
@@ -163,16 +157,14 @@ import TelegramIcon from '~icons/simple-icons/telegram';
     padding: 16px;
     background: rgba(24,24,36,0.7);
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg, 22px);
+    border-radius: 18px;
     color: var(--text-primary);
-    transition: all 0.25s var(--ease-spring, cubic-bezier(0.34,1.4,0.64,1));
+    transition: background-color 0.2s, border-color 0.2s;
 }
 
 .link-card:hover {
     background: rgba(32,32,48,0.9);
-    border-color: rgba(124,77,255,0.45);
-    transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(124,77,255,0.25);
+    border-color: rgba(124,77,255,0.4);
 }
 
 .about-footer {

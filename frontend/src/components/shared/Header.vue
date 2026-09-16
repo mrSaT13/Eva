@@ -60,26 +60,19 @@ import { inject } from 'vue';
     border-radius: 12px;
     background: var(--bg-input);
     border: 1px solid var(--border);
-    transition: all 0.25s var(--ease-spring, cubic-bezier(0.34,1.4,0.64,1));
+    transition: background-color 0.2s, border-color 0.2s;
     text-decoration: none;
 }
 
 .nav-btn:hover {
     background: var(--bg-hover);
     border-color: var(--border-strong, rgba(255,255,255,0.14));
-    transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-}
-
-.nav-btn:active {
-    transform: translateY(0) scale(0.96);
 }
 
 a.router-link-exact-active {
     color: #fff;
-    background: linear-gradient(135deg, #7c4dff, #40c4ff);
+    background: linear-gradient(135deg, #7c4dff, #5b8cff);
     border-color: transparent;
-    box-shadow: 0 4px 18px rgba(124, 77, 255, 0.45);
 }
 
 .home-btn:hover {

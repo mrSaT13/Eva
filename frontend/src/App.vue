@@ -136,8 +136,8 @@ a:hover { color: var(--accent-hover); }
     border-radius: 8px;
 }
 
-.icon-button, .icon-button:visited { color: var(--text-secondary); transition: color 0.2s, transform 0.2s var(--ease-spring); }
-.icon-button:hover:not(:disabled) { color: var(--accent-2); transform: translateY(-1px); }
+.icon-button, .icon-button:visited { color: var(--text-secondary); transition: color 0.2s; }
+.icon-button:hover:not(:disabled) { color: var(--accent-2); }
 </style>
 
 <style scoped>
@@ -152,22 +152,31 @@ a:hover { color: var(--accent-hover); }
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    /* header (64) сверху и nav (68) снизу — отступы, чтобы ничего не уезжало под них */
+    /* header (64) сверху и плавающая nav снизу — запас, чтобы контент не уезжал под них */
     padding-top: var(--header-h);
-    padding-bottom: var(--nav-h);
+    padding-bottom: calc(var(--nav-h) + 28px);
     -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
     position: relative;
     z-index: 1;
 }
 
+/*
+  Адаптация под ширину экрана:
+  - сама полоса на всю ширину (ПК использует место, мобила — всё доступное)
+  - узкие страницы (чат) ограничивают себя сами изнутри (DialogPage: 720px)
+  - широкие (настройки) занимают до 1280px
+*/
 .tab-pane {
     min-height: 100%;
-    max-width: 860px;
-    margin: 0 auto;
     width: 100%;
-    padding: 0 16px;
-    animation: eva-fade-slide-up 0.35s var(--ease-smooth);
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+@media (max-width: 640px) {
+    .tab-pane {
+        padding: 0 12px;
+    }
 }
 
 .bottom-nav {
@@ -191,20 +200,6 @@ a:hover { color: var(--accent-hover); }
     box-shadow: var(--shadow-lg);
 }
 
-.bottom-nav::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(135deg, rgba(124,77,255,0.35), rgba(64,196,255,0.18), transparent 60%);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-    opacity: 0.7;
-}
-
 .nav-item {
     flex: 1;
     display: flex;
@@ -216,7 +211,7 @@ a:hover { color: var(--accent-hover); }
     border-radius: var(--radius-pill);
     color: var(--text-muted);
     cursor: pointer;
-    transition: all 0.25s var(--ease-smooth);
+    transition: background-color 0.2s, color 0.2s;
     padding: 10px 14px;
     position: relative;
 }
@@ -228,13 +223,12 @@ a:hover { color: var(--accent-hover); }
 
 .nav-item.active {
     color: #fff;
-    background: var(--gradient-accent);
-    background-size: 180% 180%;
-    box-shadow: 0 4px 20px rgba(124, 77, 255, 0.45);
+    background: linear-gradient(135deg, #7c4dff, #5b8cff);
+    box-shadow: 0 4px 16px rgba(124, 77, 255, 0.35);
 }
 
 .nav-item.active:hover {
-    filter: brightness(1.08);
+    filter: brightness(1.06);
 }
 
 .nav-icon {
