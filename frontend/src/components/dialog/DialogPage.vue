@@ -9,6 +9,7 @@ import type { ActorRef } from 'xstate';
 
 import SendIcon from '~icons/material-symbols/send'
 import CameraIcon from '~icons/material-symbols/camera'
+import CloseIcon from '~icons/material-symbols/close'
 import NoMessagesIcon from '~icons/mdi/message-processing-outline'
 
 const inputValue = ref('');
@@ -86,7 +87,7 @@ const sendCommand = () => {
         <div v-if="showCameras" class="cameras-panel">
             <div class="cameras-header">
                 <span>Камеры Home Assistant</span>
-                <button @click="showCameras = false" class="close-btn">✕</button>
+                <button @click="showCameras = false" class="close-btn"><CloseIcon /></button>
             </div>
             <div v-if="loadingCameras" class="cameras-loading">Загрузка...</div>
             <div v-else-if="cameras.length === 0" class="cameras-empty">Камеры не найдены</div>

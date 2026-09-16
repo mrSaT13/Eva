@@ -10,7 +10,7 @@ import SendIcon from '~icons/material-symbols/send';
 import EditIcon from '~icons/material-symbols/edit';
 import CloseIcon from '~icons/material-symbols/close';
 
-interface Trigger { type: string; entity_id?: string; time?: string; event?: string; condition?: string; }
+interface Trigger { type: string; entity_id?: string; time?: string; interval?: number; cron?: string; event?: string; condition?: string; }
 interface Action { type: string; entity_id?: string; service?: string; data?: any; message?: string; }
 interface Automation { id: string; name: string; trigger: Trigger; actions: Action[]; enabled: boolean; }
 
@@ -45,6 +45,26 @@ const selectDevice = (entityId: string) => {
 const triggerTypes = ref<TriggerType[]>([]);
 const actionTypes = ref<ActionType[]>([]);
 const haStatus = ref<{ connected: boolean; error?: string } | null>(null);
+const typesFailed = ref(false);
+
+// Локальный fallback: конструктор работает даже без связи с бэкендом
+// (демо-стенд, сеть легла). Синхронизировано с plugin_automations.
+const FALLBACK_TRIGGERS: TriggerType[] = [
+    { type: 'time', name: 'По времени (HH:MM)', icon: '', fields: ['time'] },
+    { type: 'interval', name: 'Интервал (каждые N сек)', icon: '', fields: ['interval'] },
+    { type: 'cron', name: 'Расписание (cron)', icon: '', fields: ['cron'] },
+    { type: 'state', name: 'Изменение устройства', icon: '', fields: ['entity_id'] },
+    { type: 'sun', name: 'Восход/закат', icon: '', fields: [] },
+    { type: 'manual', name: 'Голосовая команда', icon: '', fields: [] },
+    { type: 'text_command', name: 'Текстовая команда', icon: '', fields: [] },
+];
+const FALLBACK_ACTIONS: ActionType[] = [
+    { type: 'service', name: 'Управление устройством', icon: '', fields: [] },
+    { type: 'speak', name: 'Озвучить текст', icon: '', fields: [] },
+    { type: 'reply', name: 'Ответ текстом', icon: '', fields: [] },
+    { type: 'notify', name: 'Уведомление', icon: '', fields: [] },
+    { type: 'delay', name: 'Задержка', icon: '', fields: [] },
+];
 
 const showCreate = ref(false);
 const editingId = ref<string | null>(null);
@@ -61,10 +81,18 @@ const fetchHADevices = async () => {
     try { const r = await fetch('/api/automations/ha/devices'); if (r.ok) haDevices.value = await r.json(); } catch {}
 };
 const fetchTriggerTypes = async () => {
-    try { const r = await fetch('/api/automations/ha/trigger_types'); if (r.ok) triggerTypes.value = await r.json(); } catch {}
+    try {
+        const r = await fetch('/api/automations/ha/trigger_types');
+        if (r.ok) { triggerTypes.value = await r.json(); return; }
+        throw new Error(`HTTP ${r.status}`);
+    } catch { triggerTypes.value = FALLBACK_TRIGGERS; typesFailed.value = true; }
 };
 const fetchActionTypes = async () => {
-    try { const r = await fetch('/api/automations/ha/action_types'); if (r.ok) actionTypes.value = await r.json(); } catch {}
+    try {
+        const r = await fetch('/api/automations/ha/action_types');
+        if (r.ok) { actionTypes.value = await r.json(); return; }
+        throw new Error(`HTTP ${r.status}`);
+    } catch { actionTypes.value = FALLBACK_ACTIONS; typesFailed.value = true; }
 };
 const checkHA = async () => {
     try { const r = await fetch('/api/automations/ha_status'); if (r.ok) haStatus.value = await r.json(); } catch {}
@@ -144,6 +172,10 @@ onMounted(() => { checkHA(); fetchTriggerTypes(); fetchActionTypes(); fetchHADev
             <component :is="haStatus.connected ? CheckIcon : ErrorIcon" />
             {{ haStatus.connected ? 'Home Assistant подключён' : (haStatus.error || 'HA не настроен') }}
         </div>
+        <div v-if="typesFailed" class="ha-bar err">
+            <ErrorIcon />
+            Нет связи с бэкендом — показан базовый набор триггеров/действий, устройства недоступны
+        </div>
 
         <!-- Create/Edit Form -->
         <div v-if="showCreate" class="create-form">
@@ -165,6 +197,13 @@ onMounted(() => { checkHA(); fetchTriggerTypes(); fetchActionTypes(); fetchHADev
 
                 <div v-if="newAuto.trigger.type === 'time'" class="trigger-detail">
                     <input v-model="newAuto.trigger.time" type="time" class="form-input" />
+                </div>
+                <div v-else-if="newAuto.trigger.type === 'interval'" class="trigger-detail">
+                    <input v-model.number="newAuto.trigger.interval" type="number" min="5" placeholder="Каждые N секунд" class="form-input" />
+                    <span class="unit">сек</span>
+                </div>
+                <div v-else-if="newAuto.trigger.type === 'cron'" class="trigger-detail">
+                    <input v-model="newAuto.trigger.cron" placeholder="Cron: мин час * * * (например: 0 8 * * *)" class="form-input" />
                 </div>
                 <div v-else-if="newAuto.trigger.type === 'state'" class="trigger-detail">
                     <input v-model="deviceSearch" placeholder="Поиск устройства..." class="form-input" />
@@ -260,7 +299,7 @@ onMounted(() => { checkHA(); fetchTriggerTypes(); fetchActionTypes(); fetchHADev
                 </div>
                 <div class="auto-body">
                     <div class="auto-trigger">
-                        <span class="label">Если:</span> {{ auto.trigger.type === 'time' ? 'Время ' + auto.trigger.time : auto.trigger.type === 'state' ? getEntityName(auto.trigger.entity_id || '') + ' -> ' + (auto.trigger.condition || '?') : auto.trigger.type === 'sun' ? (auto.trigger.event === 'sunrise' ? 'Восход' : 'Закат') : auto.trigger.type === 'manual' ? '"' + (auto.trigger.condition || '?') + '"' : auto.trigger.type }}
+                        <span class="label">Если:</span> {{ auto.trigger.type === 'time' ? 'Время ' + auto.trigger.time : auto.trigger.type === 'interval' ? 'Каждые ' + (auto.trigger.interval || '?') + 'с' : auto.trigger.type === 'cron' ? 'По расписанию ' + (auto.trigger.cron || '?') : auto.trigger.type === 'state' ? getEntityName(auto.trigger.entity_id || '') + ' -> ' + (auto.trigger.condition || '?') : auto.trigger.type === 'sun' ? (auto.trigger.event === 'sunrise' ? 'Восход' : 'Закат') : auto.trigger.type === 'manual' ? '"' + (auto.trigger.condition || '?') + '"' : auto.trigger.type }}
                     </div>
                     <div class="auto-actions-list">
                         <span class="label">Тогда:</span>

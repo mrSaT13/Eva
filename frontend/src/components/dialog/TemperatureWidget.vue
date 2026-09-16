@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue';
+import ThermometerIcon from '~icons/material-symbols/thermometer';
 
 const props = defineProps<{
     entityId?: string;
@@ -35,7 +36,7 @@ onMounted(() => { if (props.visible) fetchTemp(); });
 
 <template>
     <div v-if="visible && entityId" class="temp-widget">
-        <div class="temp-icon">🌡️</div>
+        <div class="temp-icon"><ThermometerIcon /></div>
         <div class="temp-info">
             <div class="temp-value">{{ loading ? '...' : temp }}{{ unit }}</div>
             <div class="temp-name">{{ name }}</div>

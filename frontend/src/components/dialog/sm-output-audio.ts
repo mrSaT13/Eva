@@ -118,7 +118,7 @@ export const audioOutputMachine = createMachine<Context>(
             storeToHistory: send(
                 (_, event) => ({
                     type: 'HISTORY_ADD_MESSAGE',
-                    data: { direction: 'out', text: PlaybackRequestMessage.parse(event.data).altText ?? '🔊' }
+                    data: { direction: 'out', text: PlaybackRequestMessage.parse(event.data).altText ?? '[аудио]' }
                 }),
                 { to: 'eventBus' }
             ),

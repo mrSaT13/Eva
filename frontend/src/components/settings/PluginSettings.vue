@@ -22,6 +22,7 @@ import LanguageIcon from '~icons/material-symbols/language';
 import KeyIcon from '~icons/material-symbols/key';
 import WebIcon from '~icons/material-symbols/language';
 import TtsIcon from '~icons/material-symbols/record-voice-over';
+import DeleteIcon from '~icons/material-symbols/delete';
 
 interface Plugin {
     scope: string;
@@ -377,7 +378,7 @@ onMounted(() => {
                         <InfoIcon />
                     </button>
                     <button class="icon-btn" @click="openPluginConfig(plugin)" title="JSON конфигурация">
-                        ⚙️
+                        <SystemIcon />
                     </button>
                 </div>
             </div>
@@ -401,12 +402,12 @@ onMounted(() => {
                     <div class="tile-meta">{{ p.modified }} · {{ Math.round(p.size / 1024) }} KB</div>
                     <div class="tile-actions">
                         <button v-if="p.config_fields && p.config_fields.length" class="action-btn" @click="openUserPluginSettings(p)">
-                            <SettingsIcon /> Настройки
+                            <SystemIcon /> Настройки
                         </button>
                         <button class="icon-btn" @click="openInfo(p)" title="Информация">
                             <InfoIcon />
                         </button>
-                        <button class="icon-btn danger" @click="deleteUserPlugin(p.filename)" title="Удалить">🗑️</button>
+                        <button class="icon-btn danger" @click="deleteUserPlugin(p.filename)" title="Удалить"><DeleteIcon /></button>
                     </div>
                 </div>
             </div>
@@ -454,7 +455,7 @@ onMounted(() => {
                     </div>
                     <div class="modal-actions">
                         <button class="cancel-btn" @click="showTimerSettings = false">Отмена</button>
-                        <button class="save-btn" @click="saveTimerSettings"><CheckIcon v-if="timerSaving" /> {{ timerSaving ? '✓' : 'Сохранить' }}</button>
+                        <button class="save-btn" @click="saveTimerSettings"><CheckIcon v-if="timerSaving" /><SaveIcon v-else /> {{ timerSaving ? 'Сохранение...' : 'Сохранить' }}</button>
                     </div>
                 </div>
             </div>
@@ -475,7 +476,7 @@ onMounted(() => {
                     <p class="hint">Голос: "погода" или "погода в Москве"</p>
                     <div class="modal-actions">
                         <button class="cancel-btn" @click="showWeatherSettings = false">Отмена</button>
-                        <button class="save-btn" @click="saveWeatherSettings"><CheckIcon v-if="weatherSaving" /> {{ weatherSaving ? '✓' : 'Сохранить' }}</button>
+                        <button class="save-btn" @click="saveWeatherSettings"><CheckIcon v-if="weatherSaving" /><SaveIcon v-else /> {{ weatherSaving ? 'Сохранение...' : 'Сохранить' }}</button>
                     </div>
                 </div>
             </div>
@@ -491,7 +492,7 @@ onMounted(() => {
                 <div class="modal-body">
                     <p class="info-desc">{{ getMeta(infoPlugin.scope).desc }}</p>
                     <div class="info-row"><span class="info-label">Scope:</span> <code>{{ infoPlugin.scope }}</code></div>
-                    <div class="info-row"><span class="info-label">Статус:</span> {{ infoPlugin.enabled !== false ? '✅ Включён' : '❌ Выключен' }}</div>
+                    <div class="info-row"><span class="info-label">Статус:</span> <CheckIcon v-if="infoPlugin.enabled !== false" class="inline-icon ok" /><ErrorIcon v-else class="inline-icon err" /> {{ infoPlugin.enabled !== false ? 'Включён' : 'Выключен' }}</div>
                     <div v-if="infoPlugin.comment" class="info-row"><span class="info-label">Описание:</span> {{ infoPlugin.comment }}</div>
                     <div class="modal-actions">
                         <button class="cancel-btn" @click="showInfo = false">Закрыть</button>
@@ -504,7 +505,7 @@ onMounted(() => {
         <div v-if="showPluginConfig" class="modal-overlay" @click.self="showPluginConfig = false">
             <div class="modal">
                 <div class="modal-header">
-                    <h3>⚙️ {{ selectedPlugin?.scope }}</h3>
+                    <h3><SystemIcon class="inline-icon" /> {{ selectedPlugin?.scope }}</h3>
                     <button class="close-btn" @click="showPluginConfig = false"><CloseIcon /></button>
                 </div>
                 <div class="modal-body">
@@ -512,7 +513,7 @@ onMounted(() => {
                     <p class="hint">JSON конфигурация. Изменяйте осторожно.</p>
                     <div class="modal-actions">
                         <button class="cancel-btn" @click="showPluginConfig = false">Отмена</button>
-                        <button class="save-btn" @click="savePluginConfig"><SaveIcon /> {{ configSaving ? '✓' : 'Сохранить' }}</button>
+                        <button class="save-btn" @click="savePluginConfig"><SaveIcon /> {{ configSaving ? 'Сохранение...' : 'Сохранить' }}</button>
                     </div>
                 </div>
             </div>
@@ -577,7 +578,7 @@ onMounted(() => {
                     </div>
                     <div class="modal-actions">
                         <button class="cancel-btn" @click="showUserPluginSettings = false">Отмена</button>
-                        <button v-if="editingUserPlugin.config_fields && editingUserPlugin.config_fields.length" class="save-btn" @click="saveUserPluginConfig"><SaveIcon /> {{ editSaving ? '✓' : 'Сохранить' }}</button>
+                        <button v-if="editingUserPlugin.config_fields && editingUserPlugin.config_fields.length" class="save-btn" @click="saveUserPluginConfig"><SaveIcon /> {{ editSaving ? 'Сохранение...' : 'Сохранить' }}</button>
                     </div>
                 </div>
             </div>
@@ -686,12 +687,14 @@ onMounted(() => {
 .config-field label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
 .no-config { padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; }
 
-.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
-.cancel-btn, .save-btn { display: flex; align-items: center; gap: 4px; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 13px; cursor: pointer; border: none; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }.cancel-btn, .save-btn { display: flex; align-items: center; gap: 4px; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 13px; cursor: pointer; border: none; }
 .cancel-btn { background: var(--bg-input); border: 1px solid var(--border); color: var(--text-secondary); }
 .save-btn { background: var(--accent); color: white; }
 .cancel-btn:hover { background: var(--bg-hover); }
 .save-btn:hover { background: var(--accent-hover); }
+.inline-icon { width: 16px; height: 16px; vertical-align: -3px; }
+.inline-icon.ok { color: #4caf50; }
+.inline-icon.err { color: #f44336; }
 
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 </style>

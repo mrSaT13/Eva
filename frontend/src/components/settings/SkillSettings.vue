@@ -25,6 +25,13 @@ import BoolIcon from '~icons/material-symbols/toggle-on';
 import ListIcon from '~icons/material-symbols/list';
 import StringIcon from '~icons/material-symbols/abc';
 import DateIcon from '~icons/material-symbols/event';
+import LinkIcon from '~icons/material-symbols/link';
+import LanguageIcon from '~icons/material-symbols/language';
+import ComputerIcon from '~icons/material-symbols/computer';
+import GearIcon from '~icons/material-symbols/settings';
+import WarningIcon from '~icons/material-symbols/warning';
+import HelpIcon from '~icons/material-symbols/help';
+import HourglassIcon from '~icons/material-symbols/hourglass-empty';
 
 /* =========================================================
    ТИПЫ
@@ -662,7 +669,7 @@ const runTest = async () => {
         testConsole.value.serverStatus = 'ok';
         testConsole.value.serverMessage = 'Сопоставлено локально';
     } else {
-        testConsole.value.reaction = '🤷 Не удалось сопоставить фразу ни с одним интентом';
+        testConsole.value.reaction = 'Не удалось сопоставить фразу ни с одним интентом';
         testConsole.value.actionsPlan = [];
         testConsole.value.sessionKept = false;
         testConsole.value.serverStatus = 'no_match';
@@ -689,7 +696,7 @@ const runTestOnServer = async (text: string) => {
         if (!data.matched) {
             testConsole.value.resolvedIntent = null;
             testConsole.value.resolvedSlots = {};
-            testConsole.value.reaction = '🤷 На сервере нет подходящего навыка';
+            testConsole.value.reaction = 'На сервере нет подходящего навыка';
             testConsole.value.actionsPlan = [];
             testConsole.value.sessionKept = false;
             testConsole.value.serverStatus = 'no_match';
@@ -901,7 +908,7 @@ fetchHAServices();
                                         {{ getCategoryMeta(skill.category).name }}
                                     </span>
                                     <span v-if="skill.session.enabled" class="session-badge" title="Сессионный навык">
-                                        🔗 Сессия {{ skill.session.ttl }}с
+                                        <LinkIcon /> Сессия {{ skill.session.ttl }}с
                                     </span>
                                 </div>
                                 <h3>{{ skill.name }}</h3>
@@ -949,7 +956,7 @@ fetchHAServices();
                             </div>
 
                             <div v-if="skill.reactions.length" class="skill-response">
-                                💬 <em>"{{ skill.reactions[0].text }}"</em>
+                                <TextIcon /> <em>"{{ skill.reactions[0].text }}"</em>
                                 <span v-if="skill.reactions.length > 1" class="more-reactions">+{{ skill.reactions.length - 1 }}</span>
                             </div>
                         </div>
@@ -992,11 +999,11 @@ fetchHAServices();
                         <div class="mode-switch">
                             <label class="radio inline">
                                 <input type="radio" v-model="testConsole.mode" value="server" />
-                                <span>🌐 На сервере Eva</span>
+                                <span><LanguageIcon class="inline-icon" /> На сервере Eva</span>
                             </label>
                             <label class="radio inline">
                                 <input type="radio" v-model="testConsole.mode" value="local" />
-                                <span>💻 Локальный матчер</span>
+                                <span><ComputerIcon class="inline-icon" /> Локальный матчер</span>
                             </label>
                         </div>
 
@@ -1007,17 +1014,17 @@ fetchHAServices();
                         </button>
 
                         <div v-if="testConsole.serverStatus !== 'idle'" class="server-status" :class="testConsole.serverStatus">
-                            <span v-if="testConsole.serverStatus === 'sending'">⏳</span>
-                            <span v-else-if="testConsole.serverStatus === 'ok'">✅</span>
-                            <span v-else-if="testConsole.serverStatus === 'no_match'">🤷</span>
-                            <span v-else-if="testConsole.serverStatus === 'error'">⚠️</span>
+                            <span v-if="testConsole.serverStatus === 'sending'"><HourglassIcon class="inline-icon" /></span>
+                            <span v-else-if="testConsole.serverStatus === 'ok'"><CheckIcon class="inline-icon ok" /></span>
+                            <span v-else-if="testConsole.serverStatus === 'no_match'"><HelpIcon class="inline-icon" /></span>
+                            <span v-else-if="testConsole.serverStatus === 'error'"><WarningIcon class="inline-icon err" /></span>
                             {{ testConsole.serverMessage }}
                         </div>
                     </div>
 
                     <div v-if="testConsole.resolvedIntent || testConsole.query" class="console-output">
                         <div class="console-section">
-                            <div class="console-label">🎯 Intent:</div>
+                            <div class="console-label"><SearchIcon class="inline-icon" /> Intent:</div>
                             <div v-if="testConsole.resolvedIntent" class="intent-found">
                                 <span class="intent-badge">
                                     <CodeIcon /> {{ testConsole.resolvedIntent.intent }}
@@ -1028,7 +1035,7 @@ fetchHAServices();
                         </div>
 
                         <div v-if="Object.keys(testConsole.resolvedSlots).length" class="console-section">
-                            <div class="console-label">📦 Slots (извлечено):</div>
+                            <div class="console-label"><ListIcon class="inline-icon" /> Slots (извлечено):</div>
                             <div class="slots-extracted">
                                 <div
                                     v-for="(v, k) in testConsole.resolvedSlots"
@@ -1042,7 +1049,7 @@ fetchHAServices();
                         </div>
 
                         <div v-if="testConsole.actionsPlan.length" class="console-section">
-                            <div class="console-label">⚙️ План действий:</div>
+                            <div class="console-label"><GearIcon class="inline-icon" /> План действий:</div>
                             <div class="console-flow">
                                 <template v-for="(a, i) in testConsole.actionsPlan" :key="i">
                                     <div class="action-chip" :style="{ borderColor: a.color }">
@@ -1054,11 +1061,11 @@ fetchHAServices();
                         </div>
 
                         <div class="console-section">
-                            <div class="console-label">💬 Реакция:</div>
+                            <div class="console-label"><TextIcon class="inline-icon" /> Реакция:</div>
                             <div class="reaction-block">
                                 <template v-if="testConsole.reaction">
                                     <div class="reaction-text">{{ testConsole.reaction }}</div>
-                                    <div v-if="testConsole.sessionKept" class="session-info">🔗 Сессия сохранена</div>
+                                    <div v-if="testConsole.sessionKept" class="session-info"><LinkIcon class="inline-icon" /> Сессия сохранена</div>
                                 </template>
                                 <div v-else class="muted">Введите запрос и нажмите Тестировать</div>
                             </div>
@@ -1483,7 +1490,7 @@ fetchHAServices();
                                                 <input v-model="r.tts" class="input" placeholder="Текст для озвучки с паузами/эмоциями" />
                                             </div>
                                             <div class="field" style="flex: 0 0 200px">
-                                                <label>🔊 Звук</label>
+                                                <label><VolumeIcon /> Звук</label>
                                                 <input v-model="r.sound" class="input" placeholder="ding.mp3" />
                                             </div>
                                         </div>
@@ -1536,7 +1543,7 @@ fetchHAServices();
                                         <option value="loop">Цикл</option>
                                         <option value="finale">Финал</option>
                                     </select>
-                                    <button class="icon-btn-sm" @click="removeStep(idx)">✕</button>
+                                    <button class="icon-btn-sm" @click="removeStep(idx)"><CloseIcon /></button>
                                 </div>
                                 <div class="field">
                                     <label>Текст</label>
@@ -1981,4 +1988,7 @@ fetchHAServices();
     .skill-card { flex-direction: column; }
     .skill-side { flex-direction: row; justify-content: flex-end; }
 }
+.inline-icon { width: 16px; height: 16px; vertical-align: -3px; }
+.inline-icon.ok { color: #4caf50; }
+.inline-icon.err { color: #f44336; }
 </style>

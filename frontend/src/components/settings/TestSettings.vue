@@ -7,6 +7,8 @@ import SendIcon from '~icons/material-symbols/send';
 import MicIcon from '~icons/material-symbols/mic';
 import VolumeIcon from '~icons/material-symbols/volume-up';
 import StopIcon from '~icons/material-symbols/stop';
+import BotIcon from '~icons/material-symbols/smart-toy';
+import CableIcon from '~icons/material-symbols/cable';
 
 const activeTest = ref<'llm' | 'websocket' | 'microphone' | 'tts'>('llm');
 
@@ -186,10 +188,10 @@ const testTTS = async () => {
         <p class="subtitle">Проверка компонентов системы</p>
 
         <div class="test-tabs">
-            <button class="test-tab" :class="{ active: activeTest === 'llm' }" @click="activeTest = 'llm'">🤖 LLM</button>
-            <button class="test-tab" :class="{ active: activeTest === 'websocket' }" @click="activeTest = 'websocket'">🔌 WebSocket</button>
-            <button class="test-tab" :class="{ active: activeTest === 'microphone' }" @click="activeTest = 'microphone'">🎤 Микрофон</button>
-            <button class="test-tab" :class="{ active: activeTest === 'tts' }" @click="activeTest = 'tts'">🔊 TTS</button>
+            <button class="test-tab" :class="{ active: activeTest === 'llm' }" @click="activeTest = 'llm'"><BotIcon /> LLM</button>
+            <button class="test-tab" :class="{ active: activeTest === 'websocket' }" @click="activeTest = 'websocket'"><CableIcon /> WebSocket</button>
+            <button class="test-tab" :class="{ active: activeTest === 'microphone' }" @click="activeTest = 'microphone'"><MicIcon /> Микрофон</button>
+            <button class="test-tab" :class="{ active: activeTest === 'tts' }" @click="activeTest = 'tts'"><VolumeIcon /> TTS</button>
         </div>
 
         <!-- LLM Test -->
@@ -263,6 +265,7 @@ const testTTS = async () => {
 .test-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
 
 .test-tab {
+    display: inline-flex; align-items: center; gap: 6px;
     padding: 8px 16px;
     border-radius: var(--radius-sm);
     background: var(--bg-card);

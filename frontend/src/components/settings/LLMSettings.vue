@@ -4,6 +4,9 @@ import CheckIcon from '~icons/material-symbols/check-circle';
 import ErrorIcon from '~icons/material-symbols/error';
 import LoadingIcon from '~icons/line-md/loading-twotone-loop';
 import SaveIcon from '~icons/material-symbols/save';
+import ComputerIcon from '~icons/material-symbols/computer';
+import MemoryIcon from '~icons/material-symbols/memory';
+import ChatIcon from '~icons/material-symbols/chat';
 
 type LlmType = 'lmstudio' | 'ollama' | 'openai';
 
@@ -176,13 +179,13 @@ onMounted(loadConfig);
             <h3>Тип LLM</h3>
             <div class="type-selector">
                 <button class="type-btn" :class="{ active: llmType === 'lmstudio' }" @click="llmType = 'lmstudio'">
-                    🤖 LM Studio
+                    <ComputerIcon /> LM Studio
                 </button>
                 <button class="type-btn" :class="{ active: llmType === 'ollama' }" @click="llmType = 'ollama'">
-                    🦙 Ollama
+                    <MemoryIcon /> Ollama
                 </button>
                 <button class="type-btn" :class="{ active: llmType === 'openai' }" @click="llmType = 'openai'">
-                    💬 OpenAI
+                    <ChatIcon /> OpenAI
                 </button>
             </div>
         </div>
@@ -249,6 +252,7 @@ onMounted(loadConfig);
 
 .type-selector { display: flex; gap: 8px; flex-wrap: wrap; }
 .type-btn {
+    display: inline-flex; align-items: center; gap: 6px;
     padding: 10px 16px; border-radius: var(--radius-sm);
     background: var(--bg-card); border: 1px solid var(--border);
     color: var(--text-secondary); font-size: 13px; cursor: pointer;
