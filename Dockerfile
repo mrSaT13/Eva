@@ -33,10 +33,11 @@ COPY --chown=1001:1001 eva_plugin_web_face_frontend ./eva_plugin_web_face_fronte
 COPY --chown=1001:1001 eva_plugin_llm ./eva_plugin_llm
 COPY --chown=1001:1001 eva_plugin_local_speech_face ./eva_plugin_local_speech_face
 COPY --chown=1001:1001 eva_plugin_ntp ./eva_plugin_ntp
+COPY --chown=1001:1001 eva_plugin_telegram_face ./eva_plugin_telegram_face
+COPY --chown=1001:1001 eva_plugin_translate ./eva_plugin_translate
 COPY --chown=1001:1001 docker-config ./config
 
-COPY --link --from=frontend-builder --chown=1001:1001 /home/frontend/dist/ ./eva_plugin_web_face_frontend/frontend-dist/
-COPY --chown=1001:1001 resources/ico.png ./eva_plugin_web_face_frontend/frontend-dist/ico.png
+COPY --from=frontend-builder --chown=1001:1001 /home/frontend/dist/ ./eva_plugin_web_face_frontend/frontend-dist/
 
 EXPOSE 8086
 
